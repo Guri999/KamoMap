@@ -1,5 +1,3 @@
-import com.android.build.api.dsl.Packaging
-
 plugins {
     alias(libs.plugins.kamo.application)
     alias(libs.plugins.sgp)
@@ -24,7 +22,6 @@ android {
 }
 
 dependencies {
-    implementation(projects.core.common)
     implementation(projects.core.ui)
     implementation(projects.core.domain)
     implementation(projects.core.data)
