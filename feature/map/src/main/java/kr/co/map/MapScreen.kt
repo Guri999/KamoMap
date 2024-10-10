@@ -1,6 +1,5 @@
 package kr.co.map
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,8 +10,12 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -21,6 +24,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -28,14 +35,14 @@ import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
 import com.kakao.vectormap.camera.CameraUpdateFactory
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import kr.co.common.util.timeFormat
-import kr.co.map.service.drawRoute
 import kr.co.map.service.configure
+import kr.co.map.service.drawRoute
 import kr.co.map.service.setLabel
 import kr.co.ui.theme.KakaoTheme
 import kr.co.ui.widget.KamoTopAppBar
-import timber.log.Timber
-import java.lang.Exception
 import java.util.Locale
 
 @Composable
@@ -44,24 +51,38 @@ internal fun MapRoute(
     viewModel: MapViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val context = LocalContext.current
-    val mapView = remember { MapView(context) }
+    var mapView by remember { mutableStateOf<MapView?>(null) }
+    val lifecycleOwner = LocalLifecycleOwner.current
 
-    BackHandler {
-        popBackStack()
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when(event) {
+                Lifecycle.Event.ON_RESUME -> mapView?.resume()
+                Lifecycle.Event.ON_PAUSE -> mapView?.pause()
+                Lifecycle.Event.ON_DESTROY -> mapView?.finish()
+                else -> Unit
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+            mapView?.finish()
+        }
     }
 
     MapScreen(
-        mapView = mapView,
         state = state,
+        setMapView = { mapView = it },
         popBackStack = popBackStack
     )
 }
 
 @Composable
 private fun MapScreen(
-    mapView: MapView,
     state: MapViewModel.State = MapViewModel.State(),
+    setMapView: (MapView) -> Unit = {},
     popBackStack: () -> Unit = {},
 ) {
     Scaffold(
@@ -82,7 +103,7 @@ private fun MapScreen(
             } else {
                 AndroidView(
                     factory = { context ->
-                        mapView.apply {
+                        MapView(context).apply {
                             start(
                                 object : MapLifeCycleCallback() {
                                     override fun onMapDestroy() {
@@ -116,7 +137,7 @@ private fun MapScreen(
                                     }
                                 }
                             )
-                        }
+                        }.also(setMapView)
                     }
                 )
 
