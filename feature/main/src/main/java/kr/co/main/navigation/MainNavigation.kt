@@ -2,11 +2,10 @@ package kr.co.main.navigation
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-
-const val MAIN_ROUTE = "mainRoute"
+import kr.co.navigation.KamoRoute
 
 fun NavGraphBuilder.mainNavGraph() {
-    composable(MAIN_ROUTE) {
+    composable(KamoRoute.Main.route) {
         MainNavHost()
     }
 }

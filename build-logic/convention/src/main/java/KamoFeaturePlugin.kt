@@ -19,6 +19,7 @@ internal class KamoFeaturePlugin : Plugin<Project> {
                     project(":core:ui"),
                     project(":core:domain"),
                     project(":core:common"),
+                    project(":core:navigation")
                 )
             }
         }

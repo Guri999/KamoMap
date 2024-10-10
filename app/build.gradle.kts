@@ -26,6 +26,7 @@ dependencies {
     implementation(projects.core.domain)
     implementation(projects.core.data)
     implementation(projects.core.remote)
+    implementation(projects.core.navigation)
     implementation(projects.feature.main)
 
     implementation(libs.kakao.map)

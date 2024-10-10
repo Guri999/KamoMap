@@ -4,4 +4,4 @@ plugins {
     alias(libs.plugins.kamo.library)
 }
 
-setNamespace("core.common")
+setNamespace("core.navigation")

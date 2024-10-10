@@ -9,21 +9,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import kr.co.main.navigation.MAIN_ROUTE
 import kr.co.main.navigation.mainNavGraph
+import kr.co.navigation.KamoRoute
 import kr.co.ui.theme.KaKaoTheme
-
-private enum class KakaoNavRoute(
-    val route: String
-) {
-    MAIN(MAIN_ROUTE),
-}
 
 @Composable
 internal fun KakaoNavHost(
     navController: NavHostController = rememberNavController(),
 ) {
-    var navRoute by remember { mutableStateOf(KakaoNavRoute.MAIN) }
+    var navRoute by remember { mutableStateOf(KamoRoute.Main) }
 
     KakaoNavScreen(
         startDestinationRoute = navRoute,
@@ -34,7 +28,7 @@ internal fun KakaoNavHost(
 @Composable
 private fun KakaoNavScreen(
     navController: NavHostController,
-    startDestinationRoute: KakaoNavRoute = KakaoNavRoute.MAIN,
+    startDestinationRoute: KamoRoute = KamoRoute.Main,
 ) {
     NavHost(
         navController = navController,

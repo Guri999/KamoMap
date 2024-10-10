@@ -3,13 +3,12 @@ package kr.co.location.navigation
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import kr.co.location.LocationsRoute
-
-const val LOCATION_ROUTE = "locationRoute"
+import kr.co.navigation.MainRoute
 
 fun NavGraphBuilder.locationsNavGraph(
     navigateToMap: (Pair<String, String>) -> Unit
 ) {
-    composable(LOCATION_ROUTE) {
+    composable(MainRoute.Location.route) {
         LocationsRoute(
             navigateToMap = navigateToMap
         )

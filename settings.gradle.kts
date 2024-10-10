@@ -32,6 +32,7 @@ include(":core:remote")
 include(":core:data")
 include(":core:domain")
 include(":core:common")
+include(":core:navigation")
 
 include(":feature:main")
 include(":feature:map")
