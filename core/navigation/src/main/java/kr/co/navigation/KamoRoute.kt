@@ -11,7 +11,7 @@ sealed class MainRoute(route: String) : KamoRoute(route) {
 
     data object Map : MainRoute("$MAP_ROUTE/{origin}/{destination}") {
         fun createRoute(origin: String, destination: String) =
-            "$LOCATION_ROUTE/$origin/$destination"
+            "$MAP_ROUTE/$origin/$destination"
     }
 }
 
