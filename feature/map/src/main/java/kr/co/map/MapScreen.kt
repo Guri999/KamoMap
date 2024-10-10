@@ -11,6 +11,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,6 +44,7 @@ import kr.co.map.service.drawRoute
 import kr.co.map.service.setLabel
 import kr.co.ui.theme.KakaoTheme
 import kr.co.ui.widget.KamoTopAppBar
+import kr.co.ui.widget.UnknownErrorDialog
 import java.util.Locale
 
 @Composable
@@ -53,6 +55,8 @@ internal fun MapRoute(
     val state by viewModel.state.collectAsStateWithLifecycle()
     var mapView by remember { mutableStateOf<MapView?>(null) }
     val lifecycleOwner = LocalLifecycleOwner.current
+
+    val (showErrorDialog, setShowErrorDialog) = remember { mutableStateOf<String?>(null) }
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -72,9 +76,22 @@ internal fun MapRoute(
         }
     }
 
+    LaunchedEffect(viewModel.unknownError) {
+        viewModel.unknownError.collect {
+            setShowErrorDialog(it)
+        }
+    }
+
+    if (showErrorDialog != null) {
+        UnknownErrorDialog(
+            errorLocation = showErrorDialog
+        ) { setShowErrorDialog(null) }
+    }
+
     MapScreen(
         state = state,
         setMapView = { mapView = it },
+        reportMapError = viewModel::reportMapError,
         popBackStack = popBackStack
     )
 }
@@ -83,6 +100,7 @@ internal fun MapRoute(
 private fun MapScreen(
     state: MapViewModel.State = MapViewModel.State(),
     setMapView: (MapView) -> Unit = {},
+    reportMapError: (Exception?) -> Unit = {},
     popBackStack: () -> Unit = {},
 ) {
     Scaffold(
@@ -107,12 +125,10 @@ private fun MapScreen(
                             start(
                                 object : MapLifeCycleCallback() {
                                     override fun onMapDestroy() {
-                                        TODO("Not yet implemented")
+                                        this@apply.finish()
                                     }
 
-                                    override fun onMapError(p0: Exception?) {
-                                        TODO("Not yet implemented")
-                                    }
+                                    override fun onMapError(p0: Exception?) = reportMapError(p0)
                                 },
                                 object : KakaoMapReadyCallback() {
                                     override fun onMapReady(map: KakaoMap) {

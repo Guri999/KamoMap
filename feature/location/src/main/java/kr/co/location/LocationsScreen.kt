@@ -36,6 +36,7 @@ import kr.co.ui.theme.KaKaoTheme
 import kr.co.ui.theme.KakaoTheme
 import kr.co.ui.widget.KamoErrorBottomSheet
 import kr.co.ui.widget.KamoTopAppBar
+import kr.co.ui.widget.UnknownErrorDialog
 
 typealias LocationPath = Pair<String, String>
 
@@ -48,10 +49,9 @@ internal fun LocationsRoute(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     var error by remember { mutableStateOf<KamoException?>(null) }
-    var errorLocation by remember { mutableStateOf<String?>(null) }
 
     val (showErrorSheet, setShowErrorSheet) = remember { mutableStateOf(false) }
-    val (showErrorDialog, setShowErrorDialog) = remember { mutableStateOf(false) }
+    val (showErrorDialog, setShowErrorDialog) = remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(viewModel.navigateToMap) {
         viewModel.navigateToMap.collect(navigateToMap)
@@ -66,8 +66,7 @@ internal fun LocationsRoute(
 
     LaunchedEffect(viewModel.unknownError) {
         viewModel.unknownError.collect {
-            errorLocation = it
-            setShowErrorDialog(true)
+            setShowErrorDialog(it)
         }
     }
 
@@ -82,42 +81,10 @@ internal fun LocationsRoute(
         )
     }
     
-    if (showErrorDialog) {
-        Dialog(
-            onDismissRequest = { setShowErrorDialog(false) }
-        ) {
-            Column(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(KakaoTheme.colors.bg)
-                    .padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(24.dp)
-            ) {
-                Text(
-                    text = "에러가 발생했습니다.",
-                    style = KakaoTheme.typography.title2Sb,
-                    color = KakaoTheme.colors.text,
-                )
-
-                Text(
-                    text = "발생 위치: $errorLocation",
-                    style = KakaoTheme.typography.body2R,
-                    color = KakaoTheme.colors.stroke
-                )
-
-                TextButton (
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = { setShowErrorDialog(false) },
-                ) {
-                    Text(
-                        text = "확인",
-                        style = KakaoTheme.typography.body1Sb,
-                        color = KakaoTheme.colors.emphatic2
-                    )
-                }
-            }
-        }
+    if (showErrorDialog != null) {
+        UnknownErrorDialog(
+            errorLocation = showErrorDialog
+        ) { setShowErrorDialog(null) }
     }
 
     LocationsScreen(

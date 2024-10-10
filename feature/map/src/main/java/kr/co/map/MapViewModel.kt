@@ -2,6 +2,7 @@ package kr.co.map
 
 import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kr.co.common.model.KamoException
 import kr.co.domain.model.DistanceTime
 import kr.co.domain.model.Route
 import kr.co.domain.usecase.GetDistanceTimeUseCase
@@ -22,6 +23,10 @@ internal class MapViewModel @Inject constructor(
 
     private val destination: String = checkNotNull(savedStateHandle.get<String>(DESTINATION_KEY))
 
+    fun reportMapError(e: Exception?) {
+        setUnknownError("KakaoMap SDK Error")
+    }
+
     init {
         launch {
             GetRoutesUseCase.Params(
@@ -33,6 +38,12 @@ internal class MapViewModel @Inject constructor(
                 updateState {
                     copy(routes = it)
                 }
+            }
+        }.invokeOnCompletion { e ->
+            if (e is KamoException) {
+                setError(e)
+            } else if (e != null) {
+                setUnknownError("경로 조회 API의 에러")
             }
         }
 
@@ -46,6 +57,12 @@ internal class MapViewModel @Inject constructor(
                 updateState {
                     copy(distanceTime = it)
                 }
+            }
+        }.invokeOnCompletion { e ->
+            if (e is KamoException) {
+                setError(e)
+            } else if (e != null) {
+                setUnknownError("시간 / 거리 조회 API")
             }
         }
     }
