@@ -15,33 +15,21 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kakao.vectormap.KakaoMap
-import com.kakao.vectormap.KakaoMapReadyCallback
-import com.kakao.vectormap.LatLng
-import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
-import com.kakao.vectormap.camera.CameraUpdateFactory
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import kr.co.common.util.timeFormat
-import kr.co.map.service.configure
-import kr.co.map.service.drawRoute
-import kr.co.map.service.setLabel
+import kr.co.map.service.setCallBack
 import kr.co.ui.theme.KakaoTheme
 import kr.co.ui.widget.KamoTopAppBar
 import kr.co.ui.widget.UnknownErrorDialog
@@ -114,46 +102,20 @@ private fun MapScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(scaffoldPadding)
+                .padding(scaffoldPadding),
+            contentAlignment = Alignment.Center
         ) {
             if (state.routes.isEmpty()) {
                 CircularProgressIndicator()
             } else {
                 AndroidView(
                     factory = { context ->
-                        MapView(context).apply {
-                            start(
-                                object : MapLifeCycleCallback() {
-                                    override fun onMapDestroy() {
-                                        this@apply.finish()
-                                    }
-
-                                    override fun onMapError(p0: Exception?) = reportMapError(p0)
-                                },
-                                object : KakaoMapReadyCallback() {
-                                    override fun onMapReady(map: KakaoMap) {
-
-                                        val startLatLng = state.routes.first().points.first()
-                                            .run { LatLng.from(latitude, longitude) }
-                                        val endLatLng = state.routes.last().points.last()
-                                            .run { LatLng.from(latitude, longitude) }
-
-                                        map.configure {
-                                            drawRoute(state.routes)
-                                            setLabel(startLatLng, endLatLng)
-                                        }.apply {
-                                            CameraUpdateFactory.fitMapPoints(
-                                                arrayOf(
-                                                    startLatLng,
-                                                    endLatLng
-                                                ),
-                                                120
-                                            ).let { moveCamera(it) }
-                                        }
-                                    }
-                                }
+                        MapView(context)
+                            .setCallBack(
+                                reportMapError = reportMapError,
+                                routes = state.routes
                             )
-                        }.also(setMapView)
+                            .also(setMapView)
                     }
                 )
 

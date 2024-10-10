@@ -1,7 +1,11 @@
 package kr.co.map.service
 
 import com.kakao.vectormap.KakaoMap
+import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
+import com.kakao.vectormap.MapLifeCycleCallback
+import com.kakao.vectormap.MapView
+import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
@@ -19,12 +23,50 @@ import kr.co.ui.theme.RouteSlow
 import kr.co.ui.theme.RouteUnknown
 import timber.log.Timber
 
-internal fun KakaoMap.configure(block: KakaoMapScope.() -> Unit): KakaoMap {
-    KakaoMapScope(this).apply(block)
+internal fun MapView.setCallBack(
+    reportMapError: (Exception?) -> Unit,
+    routes: List<Route>,
+): MapView {
+    start(
+        object : MapLifeCycleCallback() {
+            override fun onMapDestroy() {
+                this@setCallBack.finish()
+            }
+
+            override fun onMapError(p0: Exception?) = reportMapError(p0)
+        },
+        object : KakaoMapReadyCallback() {
+            override fun onMapReady(map: KakaoMap) {
+
+                val startLatLng = routes.first().points.first()
+                    .run { LatLng.from(latitude, longitude) }
+                val endLatLng = routes.last().points.last()
+                    .run { LatLng.from(latitude, longitude) }
+
+                map.configure {
+                    drawRoute(routes)
+                    setLabel(startLatLng, endLatLng)
+                }.apply {
+                    CameraUpdateFactory.fitMapPoints(
+                        arrayOf(
+                            startLatLng,
+                            endLatLng
+                        ),
+                        120
+                    ).let { moveCamera(it) }
+                }
+            }
+        }
+    )
     return this
 }
 
-internal class KakaoMapScope(
+private fun KakaoMap.configure(block: KakaoMapController.() -> Unit): KakaoMap {
+    KakaoMapController(this).block()
+    return this
+}
+
+private class KakaoMapController(
     private val kakaoMap: KakaoMap,
 ) {
     val routeStyleSet: RouteLineStylesSet = RouteLineStylesSet.from(
@@ -65,7 +107,7 @@ internal class KakaoMapScope(
     }
 }
 
-internal fun KakaoMapScope.drawRoute(
+private fun KakaoMapController.drawRoute(
     routes: List<Route>,
 ) {
     routes.map { route ->
@@ -79,7 +121,7 @@ internal fun KakaoMapScope.drawRoute(
     }
 }
 
-internal fun KakaoMapScope.setLabel(
+private fun KakaoMapController.setLabel(
     startPoint: LatLng,
     endPoint: LatLng,
 ) {
