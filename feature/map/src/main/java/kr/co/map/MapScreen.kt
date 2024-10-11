@@ -65,13 +65,13 @@ internal fun MapRoute(
         }
     }
 
-    LaunchedEffect(viewModel.unknownError) {
+    LaunchedEffect(Unit) {
         viewModel.unknownError.collect {
             setShowErrorDialog(it)
         }
     }
 
-    LaunchedEffect(viewModel.error) {
+    LaunchedEffect(Unit) {
         viewModel.error.collect {
             setShowErrorDialog(it.message)
         }
