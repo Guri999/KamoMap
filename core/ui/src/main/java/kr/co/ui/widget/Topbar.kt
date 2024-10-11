@@ -30,7 +30,7 @@ fun KamoTopAppBar(
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = KakaoTheme.colors.stroke,
+            containerColor = KakaoTheme.colors.topAppbar,
             titleContentColor = KakaoTheme.colors.text
         ),
         navigationIcon = {
