@@ -19,8 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import kr.co.ui.theme.KaKaoTheme
-import kr.co.ui.theme.KakaoTheme
+import kr.co.ui.theme.KamoTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,9 +35,9 @@ fun KamoErrorBottomSheet(
     ModalBottomSheet(
         modifier = Modifier
             .wrapContentHeight(),
-        containerColor = KakaoTheme.colors.bg,
+        containerColor = KamoTheme.colors.bg,
         tonalElevation = 0.dp,
-        contentColor = KakaoTheme.colors.text,
+        contentColor = KamoTheme.colors.text,
         sheetState = sheetState,
         onDismissRequest = onDismissRequest,
     ) {
@@ -49,8 +48,8 @@ fun KamoErrorBottomSheet(
         ) {
             Text(
                 text = title,
-                style = KakaoTheme.typography.title1Sb,
-                color = KakaoTheme.colors.text,
+                style = KamoTheme.typography.title1Sb,
+                color = KamoTheme.colors.text,
             )
 
             Spacer(Modifier.height(12.dp))
@@ -63,21 +62,21 @@ fun KamoErrorBottomSheet(
                 if (start != null && end != null) {
                     Text(
                         text = "경로 : $start ~ $end",
-                        style = KakaoTheme.typography.body1R,
-                        color = KakaoTheme.colors.text
+                        style = KamoTheme.typography.body1R,
+                        color = KamoTheme.colors.text
                     )
                 }
                 if (code != null) {
                     Text(
                         text = "code : $code",
-                        style = KakaoTheme.typography.body1R,
-                        color = KakaoTheme.colors.text
+                        style = KamoTheme.typography.body1R,
+                        color = KamoTheme.colors.text
                     )
                 }
                 Text(
                     text = "message : $message",
-                    style = KakaoTheme.typography.body1R,
-                    color = KakaoTheme.colors.text
+                    style = KamoTheme.typography.body1R,
+                    color = KamoTheme.colors.text
                 )
             }
 
@@ -88,13 +87,13 @@ fun KamoErrorBottomSheet(
                 shape = RoundedCornerShape(10.dp),
                 onClick = onDismissRequest,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = KakaoTheme.colors.emphatic2
+                    containerColor = KamoTheme.colors.emphatic2
                 )
             ) {
                 Text(
                     text = "확인",
-                    style = KakaoTheme.typography.body1R,
-                    color = KakaoTheme.colors.bg
+                    style = KamoTheme.typography.body1R,
+                    color = KamoTheme.colors.bg
                 )
             }
         }
@@ -105,7 +104,7 @@ fun KamoErrorBottomSheet(
 @Preview
 @Composable
 private fun KamoErrorBottomSheetPreview() {
-    KaKaoTheme {
+    KamoTheme {
         KamoErrorBottomSheet(
             title = "경로조회 실패",
             start = "에버랜드",

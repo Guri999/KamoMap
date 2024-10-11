@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 
-object KakaoTheme {
+object KamoTheme {
     val colors: ColorSet
         @Composable
         @ReadOnlyComposable
@@ -19,7 +19,7 @@ object KakaoTheme {
 }
 
 @Composable
-fun KaKaoTheme(
+fun KamoTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {

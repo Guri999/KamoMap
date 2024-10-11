@@ -27,8 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kr.co.location.model.LocationsIntent
 import kr.co.location.model.LocationsUiState
-import kr.co.ui.theme.KaKaoTheme
-import kr.co.ui.theme.KakaoTheme
+import kr.co.ui.theme.KamoTheme
 import kr.co.ui.widget.KamoErrorBottomSheet
 import kr.co.ui.widget.KamoTopAppBar
 import kr.co.ui.widget.UnknownErrorDialog
@@ -110,7 +109,7 @@ private fun LocationsScreen(
             modifier = Modifier
                 .padding(scaffoldPadding)
                 .fillMaxSize()
-                .background(KakaoTheme.colors.bg)
+                .background(KamoTheme.colors.bg)
         ) {
             items(model) {
                 PathBox(
@@ -121,7 +120,7 @@ private fun LocationsScreen(
 
                 HorizontalDivider(
                     thickness = 1.dp,
-                    color = KakaoTheme.colors.stroke
+                    color = KamoTheme.colors.stroke
                 )
             }
         }
@@ -145,7 +144,7 @@ private fun PathBox(
                 append("출발지 : ")
 
                 withStyle(
-                    style = KakaoTheme.typography.body1Sb.copy(color = KakaoTheme.colors.emphatic)
+                    style = KamoTheme.typography.body1Sb.copy(color = KamoTheme.colors.emphatic)
                         .toSpanStyle()
                 ) {
                     append("$start\n")
@@ -154,7 +153,7 @@ private fun PathBox(
                 append("도착지 : ")
 
                 withStyle(
-                    style = KakaoTheme.typography.body1Sb.copy(color = KakaoTheme.colors.emphatic2)
+                    style = KamoTheme.typography.body1Sb.copy(color = KamoTheme.colors.emphatic2)
                         .toSpanStyle()
                 ) {
                     append(end)
@@ -167,7 +166,7 @@ private fun PathBox(
 @Preview
 @Composable
 private fun Preview() {
-    KaKaoTheme {
+    KamoTheme {
         LocationsScreen()
     }
 }

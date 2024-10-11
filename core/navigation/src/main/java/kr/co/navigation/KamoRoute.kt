@@ -3,6 +3,8 @@ package kr.co.navigation
 sealed class KamoRoute(val route: String) {
 
     data object Main : KamoRoute(MAIN_ROUTE)
+
+    data object Splash : KamoRoute(SPLASH_ROUTE)
 }
 
 sealed class MainRoute(route: String) : KamoRoute(route) {
@@ -16,6 +18,7 @@ sealed class MainRoute(route: String) : KamoRoute(route) {
 }
 
 private const val MAIN_ROUTE = "mainRoute"
+private const val SPLASH_ROUTE = "splashRoute"
 
 private const val LOCATION_ROUTE = "locationRoute"
 private const val MAP_ROUTE = "mapRoute"

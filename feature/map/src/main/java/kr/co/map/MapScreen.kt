@@ -31,7 +31,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kakao.vectormap.MapView
 import kr.co.common.util.timeFormat
 import kr.co.map.service.setCallBack
-import kr.co.ui.theme.KakaoTheme
+import kr.co.ui.theme.KamoTheme
 import kr.co.ui.widget.KamoTopAppBar
 import kr.co.ui.widget.UnknownErrorDialog
 import java.util.Locale
@@ -149,8 +149,8 @@ private fun MapScreen(
                     Text(
                         text = "시간 : ${state.distanceTime?.time?.let { timeFormat(it) }}분\n"
                         + "거리 : ${String.format(Locale.getDefault(),"%,d",state.distanceTime?.distance)}m",
-                        style = KakaoTheme.typography.body1R,
-                        color = KakaoTheme.colors.okay,
+                        style = KamoTheme.typography.body1R,
+                        color = KamoTheme.colors.okay,
                     )
                 }
             }

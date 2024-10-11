@@ -9,7 +9,7 @@ plugins {
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.sgp) apply false
-    id("com.vanniktech.dependency.graph.generator") version "0.6.0"
+    id("com.vanniktech.dependency.graph.generator") version "0.8.0"
 }
 
 buildscript {

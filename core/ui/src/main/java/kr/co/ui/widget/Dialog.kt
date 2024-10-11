@@ -15,8 +15,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import kr.co.ui.theme.KaKaoTheme
-import kr.co.ui.theme.KakaoTheme
+import kr.co.ui.theme.KamoTheme
 
 @Composable
 fun UnknownErrorDialog(
@@ -29,21 +28,21 @@ fun UnknownErrorDialog(
         Column(
             modifier = Modifier
                 .clip(RoundedCornerShape(8.dp))
-                .background(KakaoTheme.colors.bg)
+                .background(KamoTheme.colors.bg)
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             Text(
                 text = "에러가 발생했습니다.",
-                style = KakaoTheme.typography.title2Sb,
-                color = KakaoTheme.colors.text,
+                style = KamoTheme.typography.title2Sb,
+                color = KamoTheme.colors.text,
             )
 
             Text(
                 text = "발생 위치: $errorLocation",
-                style = KakaoTheme.typography.body2R,
-                color = KakaoTheme.colors.stroke
+                style = KamoTheme.typography.body2R,
+                color = KamoTheme.colors.stroke
             )
 
             TextButton (
@@ -52,8 +51,8 @@ fun UnknownErrorDialog(
             ) {
                 Text(
                     text = "확인",
-                    style = KakaoTheme.typography.body1Sb,
-                    color = KakaoTheme.colors.emphatic2
+                    style = KamoTheme.typography.body1Sb,
+                    color = KamoTheme.colors.emphatic2
                 )
             }
         }
@@ -63,7 +62,7 @@ fun UnknownErrorDialog(
 @Preview
 @Composable
 private fun Preview() {
-    KaKaoTheme {
+    KamoTheme {
         UnknownErrorDialog(
             errorLocation = "Unknown API",
             onDismissRequest = {}

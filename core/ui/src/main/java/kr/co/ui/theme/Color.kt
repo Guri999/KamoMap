@@ -18,6 +18,10 @@ private val Grey5 = Color(0xFFDADADA)
 private val Grey6 = Color(0xFFEEEEEE)
 private val Grey7 = Color(0xFFF8F8F8)
 
+val KeyColor = Color(0xFFFFDE2F)
+private val KeyColor2 = Color(0x99FFDE2F)
+private val KeyColor3 = Color(0x33FFDE2F)
+
 private val Red1 = Color(0x79E67F7E)
 private val Red2 = Color(0xFFFD382A)
 private val Red3 = Color(0xFFFD382A)
@@ -61,7 +65,7 @@ internal val lightColorSet = ColorSet(
     emphatic = Green,
     emphatic2 = Blue,
     hintText = Grey3,
-    topAppbar = Grey2,
+    topAppbar = Grey4,
     stroke = Grey4,
     error = Error,
     okay = Okay,
