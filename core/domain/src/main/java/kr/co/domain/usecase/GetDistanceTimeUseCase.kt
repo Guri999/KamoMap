@@ -5,7 +5,6 @@ import kr.co.domain.model.DistanceTime
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
 class GetDistanceTimeUseCase @Inject constructor(
     private val repository: LocationRepository
 ): SuspendUseCase<GetDistanceTimeUseCase.Params, DistanceTime>() {

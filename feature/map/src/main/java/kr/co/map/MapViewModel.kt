@@ -70,7 +70,6 @@ internal class MapViewModel @Inject constructor(
                     state.value.copy(routes = data)
                 }
             }
-            throw Exception()
         }
 
         viewModelScope.launch(distanceTimeCeh) {

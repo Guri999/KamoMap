@@ -8,7 +8,7 @@ import javax.inject.Singleton
 @Singleton
 class GetRoutesUseCase @Inject constructor(
     private val repository: LocationRepository
-): CachedUseCase<GetRoutesUseCase.Params, List<Route>>(64) {
+): CachedUseCase<GetRoutesUseCase.Params, List<Route>>(10) {
 
     override suspend fun build(params: Params?): List<Route> {
         checkNotNull(params)

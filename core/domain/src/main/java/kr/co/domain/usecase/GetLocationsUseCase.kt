@@ -5,7 +5,6 @@ import kr.co.domain.model.Locations
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
 class GetLocationsUseCase @Inject constructor(
     private val repository: LocationRepository
 ): SuspendUseCase<Unit, Locations>(){
