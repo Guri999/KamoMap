@@ -71,6 +71,12 @@ internal fun MapRoute(
         }
     }
 
+    LaunchedEffect(viewModel.error) {
+        viewModel.error.collect {
+            setShowErrorDialog(it.message)
+        }
+    }
+
     BackHandler {
         popBackStack()
     }

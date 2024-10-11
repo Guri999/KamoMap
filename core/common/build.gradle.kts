@@ -5,3 +5,13 @@ plugins {
 }
 
 setNamespace("core.common")
+
+android {
+    buildFeatures {
+        buildConfig = true
+    }
+}
+
+dependencies {
+    implementation(libs.kotlinx.coroutines.android)
+}

@@ -1,5 +1,6 @@
 package kr.co.location
 
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -20,21 +21,20 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
+import kr.co.common.ext.debugLog
 import kr.co.common.model.KamoException
-import kr.co.domain.model.Locations.Location
 import kr.co.domain.usecase.GetLocationsUseCase
 import kr.co.domain.usecase.GetRoutesUseCase
 import kr.co.location.model.LocationsIntent
 import kr.co.location.model.LocationsUiState
 import kr.co.location.model.LocationsViewState
-import kr.co.ui.base.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 internal class LocationsViewModel @Inject constructor(
     private val getLocationsUseCase: GetLocationsUseCase,
     private val getRoutesUseCase: GetRoutesUseCase,
-) : BaseViewModel<LocationsViewModel.State>() {
+) : ViewModel() {
 
     private val _intentFlow = MutableSharedFlow<LocationsIntent>(extraBufferCapacity = 64)
     private val intentFlow = _intentFlow.asSharedFlow()
@@ -128,20 +128,12 @@ internal class LocationsViewModel @Inject constructor(
             }
         }.debugLog("Routes Checked")
 
-    fun processIntent(intent: LocationsIntent) = launch {
-        _intentFlow.emit(intent)
+    fun processIntent(intent: LocationsIntent)  {
+        _intentFlow.tryEmit(intent)
     }
 
     private fun <T> Flow<T>.startWith(item: T): Flow<T> = flow {
         emitAll(flowOf(item))
         emitAll(this@startWith)
     }
-
-
-    data class State(
-        val locations: List<Location> = emptyList(),
-    ) : BaseViewModel.State
-
-    override fun createInitialState(): State = State()
-
 }
