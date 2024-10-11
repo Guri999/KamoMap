@@ -1,12 +1,32 @@
 package kr.co.location
 
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.filterNot
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.scan
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.take
 import kr.co.common.model.KamoException
 import kr.co.domain.model.Locations.Location
 import kr.co.domain.usecase.GetLocationsUseCase
 import kr.co.domain.usecase.GetRoutesUseCase
+import kr.co.location.model.LocationsIntent
+import kr.co.location.model.LocationsUiState
+import kr.co.location.model.LocationsViewState
 import kr.co.ui.base.BaseViewModel
 import javax.inject.Inject
 
@@ -16,45 +36,107 @@ internal class LocationsViewModel @Inject constructor(
     private val getRoutesUseCase: GetRoutesUseCase,
 ) : BaseViewModel<LocationsViewModel.State>() {
 
-    private val _navigateToMap = MutableSharedFlow<Pair<String, String>>(replay = 1)
-    val navigateToMap = _navigateToMap.asSharedFlow()
+    private val _intentFlow = MutableSharedFlow<LocationsIntent>(extraBufferCapacity = 64)
+    private val intentFlow = _intentFlow.asSharedFlow()
 
-    fun onPathClick(location: Pair<String, String>) = launch {
-        GetRoutesUseCase.Params(
-            origin = location.first,
-            destination = location.second
-        ).run {
-            getRoutesUseCase(this)
-        }.debugLog("getRoutes")
-    }.invokeOnCompletion { e ->
-        if (e == null) {
-            _navigateToMap.tryEmit(location).debugLog("navigateToMap")
-        } else {
-            if (e is KamoException) {
-                e.apply {
-                    addExtras("origin", location.first)
-                    addExtras("destination", location.second)
-                }.debugLog("KamoException")
-                    .also { setError(it) }
-            } else {
-                setUnknownError("경로 조회 API의 에러")
-            }
+    private val initial = LocationsViewState.initial()
+
+    val viewState: StateFlow<LocationsViewState> =
+        intentFlow
+            .filtered()
+            .debugLog("intentFlow")
+            .toLocationUiChangedFlow()
+            .debugLog("uiStateFlow")
+            .scan(initial) { vs, change -> change.reduce(vs) }
+            .debugLog("viewState")
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.Eagerly,
+                initialValue = initial
+            )
+
+    private fun SharedFlow<LocationsIntent>.filtered(): Flow<LocationsIntent> =
+        merge(
+            filterIsInstance<LocationsIntent.Initial>(),
+            filterNot { it is LocationsIntent.Initial }
+        )
+
+    private fun Flow<LocationsIntent>.toLocationUiChangedFlow(): Flow<LocationsUiState> =
+        merge(
+            filterIsInstance<LocationsIntent.Initial>()
+                .toFiltered(),
+            filterIsInstance<LocationsIntent.OnPathClick>()
+                .toRoutesCheckedFlow(),
+        )
+
+    private fun Flow<LocationsIntent.Initial>.toFiltered() : Flow<LocationsUiState> =
+        flatMapLatest {
+            flowOf(Unit)
+                .take(1)
+                .flatMapLatest { toGetLocationsFlow() }
+                .onCompletion {
+                    emit(LocationsUiState.Locations(viewState.value.model))
+                }
         }
-    }
 
-    init {
-        launchWithLoading {
-            getLocationsUseCase.invoke()
+    private fun Flow<LocationsIntent.Initial>.toGetLocationsFlow(): Flow<LocationsUiState> =
+        try {
+            flow { emit(getLocationsUseCase()) }
+                .map(LocationsUiState::Locations)
+                .startWith(LocationsUiState.Loading)
                 .debugLog("getLocations")
-                .also { updateState { copy(locations = it.locations) } }
-        }.invokeOnCompletion { e ->
+        } catch (e: Exception) {
             if (e is KamoException) {
-                setError(e)
-            } else if (e != null) {
-                setUnknownError("출발지 / 도착지 리스트 API의 에러")
-            }
+                LocationsUiState.Error.KamoError(
+                    code = e.code ?: 0,
+                    message = e.message ?: "Unknown Error",
+                    localizedMessage = e.localizedMessage ?: "알 수없는 에러",
+                )
+            } else {
+                LocationsUiState.Error.UnknownError(
+                    apiName = "출발지 / 도착지 리스트 API",
+                )
+            }.let {
+                flow { emit(it) }
+            }.debugLog("Locations Error")
         }
+
+
+    private fun Flow<LocationsIntent.OnPathClick>.toRoutesCheckedFlow(): Flow<LocationsUiState> =
+        map { path ->
+            try {
+                GetRoutesUseCase.Params(
+                    origin = path.location.first,
+                    destination = path.location.second
+                ).let { getRoutesUseCase(it) }
+
+                LocationsUiState.Navigate(path.location)
+            } catch (e: Exception) {
+                if (e is KamoException) {
+                    LocationsUiState.Error.KamoError(
+                        code = e.code,
+                        message = e.message ?: "Unknown Error",
+                        localizedMessage = e.localizedMessage ?: "알 수없는 에러",
+                        origin = path.location.first,
+                        destination = path.location.second,
+                    )
+                } else {
+                    LocationsUiState.Error.UnknownError(
+                        apiName = "경로 조회 API",
+                    )
+                }
+            }
+        }.debugLog("Routes Checked")
+
+    fun processIntent(intent: LocationsIntent) = launch {
+        _intentFlow.emit(intent)
     }
+
+    private fun <T> Flow<T>.startWith(item: T): Flow<T> = flow {
+        emitAll(flowOf(item))
+        emitAll(this@startWith)
+    }
+
 
     data class State(
         val locations: List<Location> = emptyList(),

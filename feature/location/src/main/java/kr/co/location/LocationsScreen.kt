@@ -2,101 +2,102 @@ package kr.co.location
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kr.co.common.model.KamoException
+import kr.co.location.model.LocationsIntent
+import kr.co.location.model.LocationsUiState
 import kr.co.ui.theme.KaKaoTheme
 import kr.co.ui.theme.KakaoTheme
 import kr.co.ui.widget.KamoErrorBottomSheet
 import kr.co.ui.widget.KamoTopAppBar
 import kr.co.ui.widget.UnknownErrorDialog
 
-typealias LocationPath = Pair<String, String>
+private typealias LocationPath = Pair<String, String>
+private typealias Error = LocationsUiState.Error.KamoError
+private typealias UnknownError = LocationsUiState.Error.UnknownError
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun LocationsRoute(
     viewModel: LocationsViewModel = hiltViewModel(),
-    navigateToMap: (LocationPath) -> Unit = {}
+    navigateToMap: (LocationPath) -> Unit = {},
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.viewState.collectAsStateWithLifecycle()
 
-    var error by remember { mutableStateOf<KamoException?>(null) }
-
-    val (showErrorSheet, setShowErrorSheet) = remember { mutableStateOf(false) }
-    val (showErrorDialog, setShowErrorDialog) = remember { mutableStateOf<String?>(null) }
-
-    LaunchedEffect(viewModel.navigateToMap) {
-        viewModel.navigateToMap.collect(navigateToMap)
-    }
-
-    LaunchedEffect(viewModel.error) {
-        viewModel.error.collect {
-            error = it
-            setShowErrorSheet(true)
+    when (state.uiState) {
+        is Error -> {
+            val error = state.uiState as Error
+            KamoErrorBottomSheet(
+                title = error.localizedMessage,
+                start = error.origin,
+                end = error.destination,
+                code = error.code,
+                message = error.message,
+                onDismissRequest = { viewModel.processIntent(LocationsIntent.Initial)}
+            )
         }
-    }
 
-    LaunchedEffect(viewModel.unknownError) {
-        viewModel.unknownError.collect {
-            setShowErrorDialog(it)
+        is UnknownError -> {
+            UnknownErrorDialog(
+                errorLocation = (state as UnknownError).apiName
+            ) { viewModel.processIntent(LocationsIntent.Initial) }
         }
+
+        is LocationsUiState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+
+        is LocationsUiState.Navigate -> {
+            navigateToMap((state.uiState as LocationsUiState.Navigate).location)
+        }
+
+        else -> Unit
     }
 
-    if (showErrorSheet) {
-        KamoErrorBottomSheet(
-            title = error?.localizedMessage?: "알 수 없는 에러",
-            start = error?.extras?.get("origin").toString(),
-            end = error?.extras?.get("destination").toString(),
-            code = error?.code,
-            message = error?.message ?: "Unknown Error",
-            onDismissRequest = { setShowErrorSheet(false) }
-        )
-    }
-    
-    if (showErrorDialog != null) {
-        UnknownErrorDialog(
-            errorLocation = showErrorDialog
-        ) { setShowErrorDialog(null) }
+    DisposableEffect(Unit) {
+        viewModel.processIntent(LocationsIntent.Initial)
+
+        onDispose {
+
+        }
     }
 
     LocationsScreen(
-        state = state,
-        onPathClick = viewModel::onPathClick
+        model = state.model,
+        onPathClick = { viewModel.processIntent(LocationsIntent.OnPathClick(it)) }
     )
 }
 
 @Composable
 private fun LocationsScreen(
-    state: LocationsViewModel.State = LocationsViewModel.State(),
-    onPathClick: (LocationPath) -> Unit = {}
+    model: List<LocationsUiState.Locations.Location> = emptyList(),
+    onPathClick: (LocationPath) -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -111,7 +112,7 @@ private fun LocationsScreen(
                 .fillMaxSize()
                 .background(KakaoTheme.colors.bg)
         ) {
-            items(state.locations) {
+            items(model) {
                 PathBox(
                     start = it.origin,
                     end = it.destination,
@@ -131,7 +132,7 @@ private fun LocationsScreen(
 private fun PathBox(
     start: String,
     end: String,
-    onPathClick: (LocationPath) -> Unit = {}
+    onPathClick: (LocationPath) -> Unit = {},
 ) {
     Column(
         modifier = Modifier
