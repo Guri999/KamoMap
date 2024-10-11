@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -34,15 +35,31 @@ internal class MapViewModel @Inject constructor(
     private val _error: MutableSharedFlow<KamoException> = MutableSharedFlow(1)
     val error = _error.asSharedFlow()
 
-    private val _unknownError = MutableSharedFlow<String>(replay = 1)
+    private val _unknownError = MutableSharedFlow<String>(1)
     val unknownError = _unknownError.asSharedFlow()
+
+    private val routeCeh = CoroutineExceptionHandler { _, e ->
+        if (e is KamoException) {
+            _error.tryEmit(e)
+        } else {
+            _unknownError.tryEmit("경로 조회 API의 에러")
+        }
+    }
+
+    private val distanceTimeCeh = CoroutineExceptionHandler { _, e ->
+        if (e is KamoException) {
+            _error.tryEmit(e)
+        } else {
+            _unknownError.tryEmit("시간 / 거리 조회 API의 에러")
+        }
+    }
 
     fun reportMapError(e: Exception?) {
         _unknownError.tryEmit("KakaoMap SDK Error")
     }
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(routeCeh) {
             GetRoutesUseCase.Params(
                 origin = origin,
                 destination = destination
@@ -53,15 +70,10 @@ internal class MapViewModel @Inject constructor(
                     state.value.copy(routes = data)
                 }
             }
-        }.invokeOnCompletion { e ->
-            if (e is KamoException) {
-                _error.tryEmit(e)
-            } else if (e != null) {
-                _unknownError.tryEmit("경로 조회 API의 에러")
-            }
+            throw Exception()
         }
 
-        viewModelScope.launch {
+        viewModelScope.launch(distanceTimeCeh) {
             GetDistanceTimeUseCase.Params(
                 origin = origin,
                 destination = destination
@@ -71,12 +83,6 @@ internal class MapViewModel @Inject constructor(
                 _state.update {
                     state.value.copy(distanceTime = data)
                 }
-            }
-        }.invokeOnCompletion { e ->
-            if (e is KamoException) {
-                _error.tryEmit(e)
-            } else if (e != null) {
-                _unknownError.tryEmit("시간 / 거리 조회 API")
             }
         }
     }

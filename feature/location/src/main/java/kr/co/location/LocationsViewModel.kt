@@ -3,6 +3,7 @@ package kr.co.location
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -64,12 +65,13 @@ internal class LocationsViewModel @Inject constructor(
     private fun Flow<LocationsIntent>.toLocationUiChangedFlow(): Flow<LocationsUiState> =
         merge(
             filterIsInstance<LocationsIntent.Initial>()
-                .toFiltered(),
+                .toInitializeOrFallback(),
             filterIsInstance<LocationsIntent.OnPathClick>()
                 .toRoutesCheckedFlow(),
         )
 
-    private fun Flow<LocationsIntent.Initial>.toFiltered() : Flow<LocationsUiState> =
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun Flow<LocationsIntent.Initial>.toInitializeOrFallback() : Flow<LocationsUiState> =
         flatMapLatest {
             flowOf(Unit)
                 .take(1)
