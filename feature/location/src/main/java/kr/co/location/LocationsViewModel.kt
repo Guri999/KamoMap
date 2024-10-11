@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.flatMapLatest
@@ -18,11 +17,10 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.take
 import kr.co.common.ext.debugLog
+import kr.co.common.ext.startWith
 import kr.co.common.model.KamoException
 import kr.co.domain.usecase.GetLocationsUseCase
 import kr.co.domain.usecase.GetRoutesUseCase
@@ -73,15 +71,14 @@ internal class LocationsViewModel @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun Flow<LocationsIntent.Initial>.toInitializeOrFallback() : Flow<LocationsUiState> =
         flatMapLatest {
-            flowOf(Unit)
-                .take(1)
-                .flatMapLatest { toGetLocationsFlow() }
-                .onCompletion {
-                    emit(LocationsUiState.Locations(viewState.value.model))
-                }
+            if (viewState.value.model.isEmpty()) {
+                getLocationsFlow()
+            } else {
+                flowOf(LocationsUiState.Locations(viewState.value.model))
+            }
         }
 
-    private fun Flow<LocationsIntent.Initial>.toGetLocationsFlow(): Flow<LocationsUiState> =
+    private fun getLocationsFlow(): Flow<LocationsUiState> =
         try {
             flow { emit(getLocationsUseCase()) }
                 .map(LocationsUiState::Locations)
@@ -132,10 +129,5 @@ internal class LocationsViewModel @Inject constructor(
 
     fun processIntent(intent: LocationsIntent)  {
         _intentFlow.tryEmit(intent)
-    }
-
-    private fun <T> Flow<T>.startWith(item: T): Flow<T> = flow {
-        emitAll(flowOf(item))
-        emitAll(this@startWith)
     }
 }

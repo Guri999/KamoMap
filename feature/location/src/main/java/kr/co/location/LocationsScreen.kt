@@ -44,6 +44,17 @@ internal fun LocationsRoute(
 ) {
     val state by viewModel.viewState.collectAsStateWithLifecycle()
 
+    DisposableEffect(Unit) {
+        viewModel.processIntent(LocationsIntent.Initial)
+
+        onDispose {  }
+    }
+
+    LocationsScreen(
+        model = state.model,
+        onPathClick = { viewModel.processIntent(LocationsIntent.OnPathClick(it)) }
+    )
+
     when (state.uiState) {
         is Error -> {
             val error = state.uiState as Error
@@ -68,7 +79,9 @@ internal fun LocationsRoute(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(
+                    color = KamoTheme.colors.keyColor
+                )
             }
         }
 
@@ -78,19 +91,6 @@ internal fun LocationsRoute(
 
         else -> Unit
     }
-
-    DisposableEffect(Unit) {
-        viewModel.processIntent(LocationsIntent.Initial)
-
-        onDispose {
-
-        }
-    }
-
-    LocationsScreen(
-        model = state.model,
-        onPathClick = { viewModel.processIntent(LocationsIntent.OnPathClick(it)) }
-    )
 }
 
 @Composable

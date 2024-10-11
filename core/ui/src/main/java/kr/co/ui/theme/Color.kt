@@ -45,6 +45,7 @@ val RouteNormal: Int = Green.toArgb()
 @Immutable
 data class ColorSet(
     val material: ColorScheme,
+    val keyColor: Color = KeyColor,
     val bg: Color,
     val text: Color,
     val button: Color,
