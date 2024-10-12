@@ -6,7 +6,7 @@ import kr.co.remote.model.type.TrafficStateRemoteType
 
 internal object RouteStateTypeRemoteMapper : Mapper<TrafficStateRemoteType, TrafficStateDataType> {
     override fun convert(left: TrafficStateRemoteType): TrafficStateDataType {
-        return when(left) {
+        return when (left) {
             TrafficStateRemoteType.UNKNOWN -> TrafficStateDataType.UNKNOWN
             TrafficStateRemoteType.JAM -> TrafficStateDataType.JAM
             TrafficStateRemoteType.DELAY -> TrafficStateDataType.DELAY

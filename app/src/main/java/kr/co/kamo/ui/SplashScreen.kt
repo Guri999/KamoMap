@@ -2,7 +2,6 @@ package kr.co.kamo.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideIn
 import androidx.compose.foundation.Image
@@ -46,7 +45,7 @@ internal fun SplashRoute() {
 
 @Composable
 private fun SplashScreen(
-    visible: Boolean = true
+    visible: Boolean = true,
 ) {
     Box(
         modifier = Modifier.fillMaxSize()

@@ -47,7 +47,6 @@ import kr.co.ui.icon.KamoIcon
 import kr.co.ui.icon.kamoicon.Car
 import kr.co.ui.theme.KamoTheme
 import kr.co.ui.widget.KamoErrorBottomSheet
-import kr.co.ui.widget.UnknownErrorDialog
 
 private typealias LocationPath = Pair<String, String>
 private typealias Error = LocationsUiState.Error.KamoError

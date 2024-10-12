@@ -1,12 +1,9 @@
 package kr.co.ui.icon.kamoicon
 
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathFillType
 import androidx.compose.ui.graphics.PathFillType.Companion.NonZero
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeCap.Companion.Butt
-import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.StrokeJoin.Companion.Miter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.ImageVector.Builder
@@ -19,19 +16,25 @@ public val KamoIcon.Error: ImageVector
         if (_error != null) {
             return _error!!
         }
-        _error = Builder(name = "Error", defaultWidth = 24.0.dp, defaultHeight = 24.0.dp,
-                viewportWidth = 24.0f, viewportHeight = 24.0f).apply {
-            path(fill = SolidColor(Color(0xFFF24B4E)), stroke = null, strokeLineWidth = 0.0f,
-                    strokeLineCap = Butt, strokeLineJoin = Miter, strokeLineMiter = 4.0f,
-                    pathFillType = NonZero) {
+        _error = Builder(
+            name = "Error", defaultWidth = 24.0.dp, defaultHeight = 24.0.dp,
+            viewportWidth = 24.0f, viewportHeight = 24.0f
+        ).apply {
+            path(
+                fill = SolidColor(Color(0xFFF24B4E)), stroke = null, strokeLineWidth = 0.0f,
+                strokeLineCap = Butt, strokeLineJoin = Miter, strokeLineMiter = 4.0f,
+                pathFillType = NonZero
+            ) {
                 moveTo(12.0f, 12.0f)
                 moveToRelative(-12.0f, 0.0f)
                 arcToRelative(12.0f, 12.0f, 0.0f, true, true, 24.0f, 0.0f)
                 arcToRelative(12.0f, 12.0f, 0.0f, true, true, -24.0f, 0.0f)
             }
-            path(fill = SolidColor(Color(0xFFffffff)), stroke = null, strokeLineWidth = 0.0f,
-                    strokeLineCap = Butt, strokeLineJoin = Miter, strokeLineMiter = 4.0f,
-                    pathFillType = NonZero) {
+            path(
+                fill = SolidColor(Color(0xFFffffff)), stroke = null, strokeLineWidth = 0.0f,
+                strokeLineCap = Butt, strokeLineJoin = Miter, strokeLineMiter = 4.0f,
+                pathFillType = NonZero
+            ) {
                 moveTo(7.9333f, 16.3333f)
                 lineTo(7.0f, 15.4f)
                 lineTo(10.7333f, 11.6667f)
@@ -48,7 +51,7 @@ public val KamoIcon.Error: ImageVector
                 close()
             }
         }
-        .build()
+            .build()
         return _error!!
     }
 

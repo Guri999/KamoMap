@@ -15,6 +15,6 @@ internal data class GetLocationsResponse(
         val origin: String,
 
         @SerialName("destination")
-        val destination: String
+        val destination: String,
     )
 }

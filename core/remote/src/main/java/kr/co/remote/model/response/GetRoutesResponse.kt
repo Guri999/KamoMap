@@ -6,7 +6,7 @@ import kr.co.remote.model.type.TrafficStateRemoteType
 import kr.co.remote.serializer.PointSerializer
 
 @Serializable
-internal data class GetRoutesResponse (
+internal data class GetRoutesResponse(
 
     @Serializable(with = PointSerializer::class)
     @SerialName("points")

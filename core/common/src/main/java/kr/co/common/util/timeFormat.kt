@@ -7,5 +7,5 @@ fun timeFormat(second: Int): String {
     val min = (second / 60) % 60
     val hour = second / 3600
 
-    return String.format(Locale.getDefault(),"%02d:%02d", hour, min)
+    return String.format(Locale.getDefault(), "%02d:%02d", hour, min)
 }

@@ -2,8 +2,6 @@ package kr.co.map
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -17,22 +15,11 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
-import androidx.compose.material.icons.automirrored.filled.Article
-import androidx.compose.material.icons.automirrored.filled.Backspace
-import androidx.compose.material.icons.automirrored.filled.ExitToApp
-import androidx.compose.material.icons.automirrored.filled.Forward
-import androidx.compose.material.icons.automirrored.filled.Label
-import androidx.compose.material.icons.automirrored.filled.Outbound
-import androidx.compose.material.icons.automirrored.sharp.ArrowBackIos
-import androidx.compose.material.icons.automirrored.sharp.Backspace
-import androidx.compose.material.icons.automirrored.sharp.Chat
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -56,27 +43,19 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kakao.vectormap.MapView
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
 import kr.co.common.util.timeFormat
 import kr.co.map.service.setCallBack
 import kr.co.ui.theme.KamoTheme
-import kr.co.ui.widget.KamoTopAppBar
-import kr.co.ui.widget.UnknownErrorDialog
 import java.util.Locale
 
 @Composable
 internal fun MapRoute(
     viewModel: MapViewModel = hiltViewModel(),
     popBackStack: () -> Unit = {},
-    onShowErrorSnackBar: (message: String) -> Unit = {}
+    onShowErrorSnackBar: (message: String) -> Unit = {},
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -105,7 +84,10 @@ internal fun MapRoute(
             merge(
                 error.transform { emit(it.message.orEmpty()) },
                 unknownError,
-            ).collectLatest(onShowErrorSnackBar)
+            ).collectLatest {
+                onShowErrorSnackBar(it)
+                popBackStack()
+            }
         }
     }
 
@@ -268,7 +250,7 @@ private fun Preview() {
                 .background(Color.White)
                 .fillMaxSize()
         ) {
-            MapWidgetScreen("서울역","홍대입구역",3000, 2000) {}
+            MapWidgetScreen("서울역", "홍대입구역", 3000, 2000) {}
         }
     }
 

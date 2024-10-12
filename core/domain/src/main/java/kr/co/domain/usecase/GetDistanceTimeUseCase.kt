@@ -3,11 +3,10 @@ package kr.co.domain.usecase
 import kr.co.domain.LocationRepository
 import kr.co.domain.model.DistanceTime
 import javax.inject.Inject
-import javax.inject.Singleton
 
 class GetDistanceTimeUseCase @Inject constructor(
-    private val repository: LocationRepository
-): SuspendUseCase<GetDistanceTimeUseCase.Params, DistanceTime>() {
+    private val repository: LocationRepository,
+) : SuspendUseCase<GetDistanceTimeUseCase.Params, DistanceTime>() {
 
     override suspend fun build(params: Params?): DistanceTime {
         checkNotNull(params)

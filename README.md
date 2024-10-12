@@ -15,16 +15,16 @@
 ### Libraries
 
 - AndroidX
-  - Activity & Activity Compose
-  - AppCompat
-  - Core
-  - Lifecycle & ViewModel Compose
+    - Activity & Activity Compose
+    - AppCompat
+    - Core
+    - Lifecycle & ViewModel Compose
 - Kotlin Libraries
-  - Coroutine
-  - Serialization
+    - Coroutine
+    - Serialization
 - Compose
-  - Material3
-  - Navigation
+    - Material3
+    - Navigation
 - Dagger & Hilt
 - Squre (Ktor, OkHttp)
 

@@ -9,7 +9,7 @@ typealias LocationsEntity = kr.co.domain.model.Locations
 @Stable
 internal sealed interface LocationsUiState {
     fun reduce(viewState: LocationsViewState) =
-        when(this) {
+        when (this) {
             is Locations ->
                 viewState.copy(
                     model = locations,
@@ -57,7 +57,7 @@ internal sealed interface LocationsUiState {
         val location: Pair<String, String>,
     ) : LocationsUiState
 
-    sealed interface Error: LocationsUiState {
+    sealed interface Error : LocationsUiState {
 
         @Immutable
         data class KamoError(

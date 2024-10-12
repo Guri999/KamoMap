@@ -16,7 +16,7 @@ internal class RemoteModule {
     @Singleton
     @Provides
     fun provideLocationRemoteDataSource(
-        client: HttpClient
+        client: HttpClient,
     ): LocationRemoteDataSource = LocationRemoteDataSourceImpl(client)
 
 }

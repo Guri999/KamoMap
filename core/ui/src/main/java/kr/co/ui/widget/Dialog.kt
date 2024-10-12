@@ -45,7 +45,7 @@ fun UnknownErrorDialog(
                 color = KamoTheme.colors.stroke
             )
 
-            TextButton (
+            TextButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = onDismissRequest,
             ) {

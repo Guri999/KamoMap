@@ -30,7 +30,7 @@ fun KamoErrorBottomSheet(
     end: String? = null,
     code: Int? = null,
     onDismissRequest: () -> Unit,
-    sheetState: SheetState = rememberModalBottomSheetState()
+    sheetState: SheetState = rememberModalBottomSheetState(),
 ) {
     ModalBottomSheet(
         modifier = Modifier

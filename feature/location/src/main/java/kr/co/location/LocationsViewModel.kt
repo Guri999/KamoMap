@@ -69,7 +69,7 @@ internal class LocationsViewModel @Inject constructor(
         )
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun Flow<LocationsIntent.Initial>.toInitializeOrFallback() : Flow<LocationsUiState> =
+    private fun Flow<LocationsIntent.Initial>.toInitializeOrFallback(): Flow<LocationsUiState> =
         flatMapLatest {
             if (viewState.value.model.isEmpty()) {
                 getLocationsFlow()
@@ -127,7 +127,7 @@ internal class LocationsViewModel @Inject constructor(
             }
         }.debugLog("Routes Checked")
 
-    fun processIntent(intent: LocationsIntent)  {
+    fun processIntent(intent: LocationsIntent) {
         _intentFlow.tryEmit(intent)
     }
 }

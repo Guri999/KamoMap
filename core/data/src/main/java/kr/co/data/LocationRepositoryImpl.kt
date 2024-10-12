@@ -11,7 +11,7 @@ import kr.co.domain.model.Route
 import javax.inject.Inject
 
 internal class LocationRepositoryImpl @Inject constructor(
-    private val remote: LocationRemoteDataSource
+    private val remote: LocationRemoteDataSource,
 ) : LocationRepository {
 
     override suspend fun getLocations(): Locations =

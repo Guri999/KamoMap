@@ -1,8 +1,8 @@
 package kr.co.common.cache
 
-class LruCache<VALUE> (
+class LruCache<VALUE>(
     private val maxSize: Int,
-    private val expiryDuration: Long
+    private val expiryDuration: Long,
 ) : LinkedHashMap<Any, CacheEntry<VALUE>>(maxSize, 0.75f, true) {
 
     override fun removeEldestEntry(eldest: MutableMap.MutableEntry<Any, CacheEntry<VALUE>>?): Boolean {

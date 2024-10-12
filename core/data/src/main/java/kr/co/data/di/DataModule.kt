@@ -15,7 +15,7 @@ internal interface DataModule {
     @Singleton
     @Binds
     fun bindLocationRepository(
-        impl: LocationRepositoryImpl
+        impl: LocationRepositoryImpl,
     ): LocationRepository
 
 }
