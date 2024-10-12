@@ -53,6 +53,7 @@ import java.util.Locale
 
 @Composable
 internal fun MapRoute(
+    path: Pair<String, String>,
     viewModel: MapViewModel = hiltViewModel(),
     popBackStack: () -> Unit = {},
     onShowErrorSnackBar: (message: String) -> Unit = {},
@@ -77,6 +78,10 @@ internal fun MapRoute(
             lifecycleOwner.lifecycle.removeObserver(observer)
             mapView?.finish()
         }
+    }
+
+    LaunchedEffect(path) {
+        viewModel.initialize(path)
     }
 
     LaunchedEffect(Unit) {
@@ -157,7 +162,7 @@ private fun BoxScope.MapWidgetScreen(
             .align(Alignment.TopCenter)
             .systemBarsPadding()
             .padding(
-                vertical = 36.dp,
+                vertical = 20.dp,
                 horizontal = 20.dp
             )
             .shadow(

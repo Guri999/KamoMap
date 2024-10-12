@@ -15,12 +15,12 @@ internal fun MainNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = MainRoute.Location.route,
+        startDestination = MainRoute.Location,
     ) {
         locationsNavGraph(
             navigateToMap = { (origin, destination) ->
                 navController.navigate(
-                    MainRoute.Map.createRoute(origin, destination)
+                    MainRoute.Map(origin, destination)
                 )
             },
             onShowErrorSnackBar = onShowErrorSnackBar
@@ -28,8 +28,8 @@ internal fun MainNavHost(
 
         mapNavGraph(
             popBackStack = {
-                navController.navigate(MainRoute.Location.route) {
-                    popUpTo(MainRoute.Location.route) {
+                navController.navigate(MainRoute.Location) {
+                    popUpTo(MainRoute.Location) {
                         inclusive = true
                     }
                 }

@@ -1,24 +1,21 @@
 package kr.co.navigation
 
-sealed class KamoRoute(val route: String) {
+import kotlinx.serialization.Serializable
 
-    data object Main : KamoRoute(MAIN_ROUTE)
+sealed interface KamoRoute {
 
-    data object Splash : KamoRoute(SPLASH_ROUTE)
+    @Serializable
+    data object Main : KamoRoute
+
+    @Serializable
+    data object Splash : KamoRoute
 }
 
-sealed class MainRoute(route: String) : KamoRoute(route) {
+sealed interface MainRoute : KamoRoute {
 
-    data object Location : MainRoute(LOCATION_ROUTE)
+    @Serializable
+    data object Location : MainRoute
 
-    data object Map : MainRoute("$MAP_ROUTE/{origin}/{destination}") {
-        fun createRoute(origin: String, destination: String) =
-            "$MAP_ROUTE/$origin/$destination"
-    }
+    @Serializable
+    data class Map(val origin: String, val destination: String) : MainRoute
 }
-
-private const val MAIN_ROUTE = "mainRoute"
-private const val SPLASH_ROUTE = "splashRoute"
-
-private const val LOCATION_ROUTE = "locationRoute"
-private const val MAP_ROUTE = "mapRoute"

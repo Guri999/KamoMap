@@ -9,7 +9,7 @@ fun NavGraphBuilder.locationsNavGraph(
     navigateToMap: (Pair<String, String>) -> Unit,
     onShowErrorSnackBar: (message: String) -> Unit = {},
 ) {
-    composable(MainRoute.Location.route) {
+    composable<MainRoute.Location> {
         LocationsRoute(
             navigateToMap = navigateToMap,
             onShowErrorSnackBar = onShowErrorSnackBar

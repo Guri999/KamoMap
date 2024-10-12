@@ -1,6 +1,5 @@
 package kr.co.map
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,13 +15,10 @@ import kr.co.domain.model.DistanceTime
 import kr.co.domain.model.Route
 import kr.co.domain.usecase.GetDistanceTimeUseCase
 import kr.co.domain.usecase.GetRoutesUseCase
-import kr.co.map.navigation.DESTINATION_KEY
-import kr.co.map.navigation.ORIGIN_KEY
 import javax.inject.Inject
 
 @HiltViewModel
 internal class MapViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
     private val getRoutesUseCase: GetRoutesUseCase,
     private val getDistanceTimeUseCase: GetDistanceTimeUseCase,
 ) : ViewModel() {
@@ -34,12 +30,6 @@ internal class MapViewModel @Inject constructor(
 
     private val _unknownError = MutableSharedFlow<String>(1)
     val unknownError = _unknownError.asSharedFlow()
-
-    private val origin: String = checkNotNull(savedStateHandle.get<String>(ORIGIN_KEY))
-        .also { data -> _state.update { state.value.copy(origin = data) } }
-
-    private val destination: String = checkNotNull(savedStateHandle.get<String>(DESTINATION_KEY))
-        .also { data -> _state.update { state.value.copy(destination = data) } }
 
     private val routeCeh = CoroutineExceptionHandler { _, e ->
         viewModelScope.launch {
@@ -65,11 +55,21 @@ internal class MapViewModel @Inject constructor(
         _unknownError.tryEmit("KakaoMap SDK Error")
     }
 
-    init {
+    fun initialize(path: Pair<String, String>) {
+        _state.update {
+            state.value.copy(
+                origin = path.first,
+                destination = path.second
+            )
+        }
+        initializeRoutes()
+    }
+
+    private fun initializeRoutes() {
         viewModelScope.launch(routeCeh) {
             GetRoutesUseCase.Params(
-                origin = origin,
-                destination = destination
+                origin = state.value.origin,
+                destination = state.value.destination
             ).run {
                 getRoutesUseCase(this)
             }.also { data ->
@@ -81,8 +81,8 @@ internal class MapViewModel @Inject constructor(
 
         viewModelScope.launch(distanceTimeCeh) {
             GetDistanceTimeUseCase.Params(
-                origin = origin,
-                destination = destination
+                origin = state.value.origin,
+                destination = state.value.destination
             ).run {
                 getDistanceTimeUseCase(this)
             }.also { data ->
@@ -91,7 +91,6 @@ internal class MapViewModel @Inject constructor(
                 }
             }
         }
-
     }
 
     data class State(
