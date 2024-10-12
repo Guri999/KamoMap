@@ -24,12 +24,12 @@ fun KamoTopAppBar(
             Text(
                 text = title,
                 style = KamoTheme.typography.body1Sb,
-                color = KamoTheme.colors.text
+                color = KamoTheme.colors.black
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = KamoTheme.colors.topAppbar,
-            titleContentColor = KamoTheme.colors.text
+            containerColor = KamoTheme.colors.white,
+            titleContentColor = KamoTheme.colors.black
         ),
         navigationIcon = {
             onNavClick?.let {

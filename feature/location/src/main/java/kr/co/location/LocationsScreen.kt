@@ -1,35 +1,52 @@
 package kr.co.location
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kr.co.location.model.LocationsIntent
 import kr.co.location.model.LocationsUiState
+import kr.co.ui.icon.KamoIcon
+import kr.co.ui.icon.kamoicon.Car
 import kr.co.ui.theme.KamoTheme
 import kr.co.ui.widget.KamoErrorBottomSheet
-import kr.co.ui.widget.KamoTopAppBar
 import kr.co.ui.widget.UnknownErrorDialog
 
 private typealias LocationPath = Pair<String, String>
@@ -41,13 +58,26 @@ private typealias UnknownError = LocationsUiState.Error.UnknownError
 internal fun LocationsRoute(
     viewModel: LocationsViewModel = hiltViewModel(),
     navigateToMap: (LocationPath) -> Unit = {},
+    onShowErrorSnackBar: (message: String) -> Unit = {},
 ) {
     val state by viewModel.viewState.collectAsStateWithLifecycle()
 
     DisposableEffect(Unit) {
         viewModel.processIntent(LocationsIntent.Initial)
 
-        onDispose {  }
+        onDispose { }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.viewState.collectLatest {
+            if (
+                it.uiState is LocationsUiState.Locations
+                && it.model.isEmpty()
+            ) {
+                delay(1_000)
+                viewModel.processIntent(LocationsIntent.Initial)
+            }
+        }
     }
 
     LocationsScreen(
@@ -64,14 +94,12 @@ internal fun LocationsRoute(
                 end = error.destination,
                 code = error.code,
                 message = error.message,
-                onDismissRequest = { viewModel.processIntent(LocationsIntent.Initial)}
+                onDismissRequest = { viewModel.processIntent(LocationsIntent.Initial) }
             )
         }
 
         is UnknownError -> {
-            UnknownErrorDialog(
-                errorLocation = (state as UnknownError).apiName
-            ) { viewModel.processIntent(LocationsIntent.Initial) }
+            onShowErrorSnackBar((state.uiState as UnknownError).apiName)
         }
 
         is LocationsUiState.Loading -> {
@@ -98,33 +126,41 @@ private fun LocationsScreen(
     model: List<LocationsUiState.Locations.Location> = emptyList(),
     onPathClick: (LocationPath) -> Unit = {},
 ) {
-    Scaffold(
-        topBar = {
-            KamoTopAppBar(
-                title = "카카오 모빌리티 2차 과제"
-            )
-        },
-    ) { scaffoldPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(scaffoldPadding)
-                .fillMaxSize()
-                .background(KamoTheme.colors.bg)
-        ) {
-            items(model) {
-                PathBox(
-                    start = it.origin,
-                    end = it.destination,
-                    onPathClick = onPathClick
-                )
 
-                HorizontalDivider(
-                    thickness = 1.dp,
-                    color = KamoTheme.colors.stroke
-                )
-            }
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(KamoTheme.colors.keyColor3)
+            .padding(horizontal = 20.dp)
+            .navigationBarsPadding()
+    ) {
+        item {
+            Spacer(modifier = Modifier.height(40.dp))
+
+            Text(
+                text = "경로 찾기",
+                style = KamoTheme.typography.title1Sb,
+                color = KamoTheme.colors.black
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+
+        items(model) {
+            PathBox(
+                start = it.origin,
+                end = it.destination,
+                onPathClick = onPathClick
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(40.dp))
         }
     }
+
 }
 
 @Composable
@@ -133,40 +169,79 @@ private fun PathBox(
     end: String,
     onPathClick: (LocationPath) -> Unit = {},
 ) {
-    Column(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = { onPathClick(start to end) })
-            .padding(16.dp)
+            .shadow(
+                elevation = 4.dp,
+                shape = RoundedCornerShape(12.dp),
+                spotColor = Color.Black.copy(0.25f),
+                ambientColor = Color.Black.copy(0.25f)
+            )
+            .clip(RoundedCornerShape(12.dp))
+            .clickable { onPathClick(start to end) }
+            .background(KamoTheme.colors.white)
+            .padding(24.dp)
+            .semantics {
+                contentDescription = "$start -> $end 카카오 맵으로 경로 찾기"
+            },
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            text = buildAnnotatedString {
-                append("출발지 : ")
-
-                withStyle(
-                    style = KamoTheme.typography.body1Sb.copy(color = KamoTheme.colors.emphatic)
-                        .toSpanStyle()
-                ) {
-                    append("$start\n")
-                }
-
-                append("도착지 : ")
-
-                withStyle(
-                    style = KamoTheme.typography.body1Sb.copy(color = KamoTheme.colors.emphatic2)
-                        .toSpanStyle()
-                ) {
-                    append(end)
-                }
-            }
+        Image(
+            modifier = Modifier
+                .size(56.dp)
+                .clearAndSetSemantics { },
+            imageVector = KamoIcon.Car,
+            contentDescription = null,
         )
+
+        Spacer(modifier = Modifier.width(40.dp))
+
+        Row(
+            modifier = Modifier.weight(1f),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                modifier = Modifier.weight(1f),
+                text = start,
+                style = KamoTheme.typography.body1Sb,
+                color = KamoTheme.colors.black
+            )
+            Icon(
+                modifier = Modifier
+                    .weight(1f)
+                    .size(24.dp)
+                    .clearAndSetSemantics { },
+                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                contentDescription = null,
+                tint = KamoTheme.colors.grey3
+            )
+            Text(
+                modifier = Modifier.weight(1f),
+                text = end,
+                style = KamoTheme.typography.body1Sb,
+                color = KamoTheme.colors.keyColor
+            )
+        }
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun Preview() {
     KamoTheme {
-        LocationsScreen()
+        LocationsScreen(
+            model = listOf(
+                LocationsUiState.Locations.Location(
+                    origin = "에버랜드",
+                    destination = "서울랜드"
+                ),
+                LocationsUiState.Locations.Location(
+                    origin = "서울역",
+                    destination = "서울랜드"
+                ),
+            )
+        )
     }
 }

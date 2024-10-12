@@ -28,7 +28,7 @@ fun UnknownErrorDialog(
         Column(
             modifier = Modifier
                 .clip(RoundedCornerShape(8.dp))
-                .background(KamoTheme.colors.bg)
+                .background(KamoTheme.colors.white)
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(24.dp)
@@ -36,7 +36,7 @@ fun UnknownErrorDialog(
             Text(
                 text = "에러가 발생했습니다.",
                 style = KamoTheme.typography.title2Sb,
-                color = KamoTheme.colors.text,
+                color = KamoTheme.colors.black,
             )
 
             Text(
@@ -52,7 +52,7 @@ fun UnknownErrorDialog(
                 Text(
                     text = "확인",
                     style = KamoTheme.typography.body1Sb,
-                    color = KamoTheme.colors.emphatic2
+                    color = KamoTheme.colors.keyColor
                 )
             }
         }

@@ -11,6 +11,7 @@ import kr.co.navigation.MainRoute
 @Composable
 internal fun MainNavHost(
     navController: NavHostController = rememberNavController(),
+    onShowErrorSnackBar: (message: String) -> Unit = {}
 ) {
     NavHost(
         navController = navController,
@@ -21,7 +22,8 @@ internal fun MainNavHost(
                 navController.navigate(
                     MainRoute.Map.createRoute(origin, destination)
                 )
-            }
+            },
+            onShowErrorSnackBar = onShowErrorSnackBar
         )
 
         mapNavGraph(
@@ -31,7 +33,8 @@ internal fun MainNavHost(
                         inclusive = true
                     }
                 }
-            }
+            },
+            onShowErrorSnackBar = onShowErrorSnackBar
         )
     }
 }

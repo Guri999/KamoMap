@@ -35,9 +35,9 @@ fun KamoErrorBottomSheet(
     ModalBottomSheet(
         modifier = Modifier
             .wrapContentHeight(),
-        containerColor = KamoTheme.colors.bg,
+        containerColor = KamoTheme.colors.white,
         tonalElevation = 0.dp,
-        contentColor = KamoTheme.colors.text,
+        contentColor = KamoTheme.colors.black,
         sheetState = sheetState,
         onDismissRequest = onDismissRequest,
     ) {
@@ -49,7 +49,7 @@ fun KamoErrorBottomSheet(
             Text(
                 text = title,
                 style = KamoTheme.typography.title1Sb,
-                color = KamoTheme.colors.text,
+                color = KamoTheme.colors.black,
             )
 
             Spacer(Modifier.height(12.dp))
@@ -63,20 +63,20 @@ fun KamoErrorBottomSheet(
                     Text(
                         text = "경로 : $start ~ $end",
                         style = KamoTheme.typography.body1R,
-                        color = KamoTheme.colors.text
+                        color = KamoTheme.colors.black
                     )
                 }
                 if (code != null) {
                     Text(
                         text = "code : $code",
                         style = KamoTheme.typography.body1R,
-                        color = KamoTheme.colors.text
+                        color = KamoTheme.colors.black
                     )
                 }
                 Text(
                     text = "message : $message",
                     style = KamoTheme.typography.body1R,
-                    color = KamoTheme.colors.text
+                    color = KamoTheme.colors.black
                 )
             }
 
@@ -87,13 +87,13 @@ fun KamoErrorBottomSheet(
                 shape = RoundedCornerShape(10.dp),
                 onClick = onDismissRequest,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = KamoTheme.colors.emphatic2
+                    containerColor = KamoTheme.colors.keyColor
                 )
             ) {
                 Text(
                     text = "확인",
                     style = KamoTheme.typography.body1R,
-                    color = KamoTheme.colors.bg
+                    color = KamoTheme.colors.black
                 )
             }
         }

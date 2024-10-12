@@ -6,11 +6,13 @@ import kr.co.location.LocationsRoute
 import kr.co.navigation.MainRoute
 
 fun NavGraphBuilder.locationsNavGraph(
-    navigateToMap: (Pair<String, String>) -> Unit
+    navigateToMap: (Pair<String, String>) -> Unit,
+    onShowErrorSnackBar: (message: String) -> Unit = {}
 ) {
     composable(MainRoute.Location.route) {
         LocationsRoute(
-            navigateToMap = navigateToMap
+            navigateToMap = navigateToMap,
+            onShowErrorSnackBar = onShowErrorSnackBar
         )
     }
 }

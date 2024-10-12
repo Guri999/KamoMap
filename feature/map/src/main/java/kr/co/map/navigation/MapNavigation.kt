@@ -12,6 +12,7 @@ internal const val DESTINATION_KEY = "destination"
 
 fun NavGraphBuilder.mapNavGraph(
     popBackStack: () -> Unit,
+    onShowErrorSnackBar: (message: String) -> Unit
 ) {
     composable(
         route = MainRoute.Map.route,
@@ -27,7 +28,8 @@ fun NavGraphBuilder.mapNavGraph(
         )
     ) {
         MapRoute(
-            popBackStack = popBackStack
+            popBackStack = popBackStack,
+            onShowErrorSnackBar = onShowErrorSnackBar
         )
     }
 }

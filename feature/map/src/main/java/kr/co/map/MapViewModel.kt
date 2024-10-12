@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -26,9 +27,6 @@ internal class MapViewModel @Inject constructor(
     private val getRoutesUseCase: GetRoutesUseCase,
     private val getDistanceTimeUseCase: GetDistanceTimeUseCase,
 ) : ViewModel() {
-    private val origin: String = checkNotNull(savedStateHandle.get<String>(ORIGIN_KEY))
-    private val destination: String = checkNotNull(savedStateHandle.get<String>(DESTINATION_KEY))
-
     private val _state: MutableStateFlow<State> = MutableStateFlow(State())
     val state = _state.asStateFlow()
 
@@ -38,19 +36,29 @@ internal class MapViewModel @Inject constructor(
     private val _unknownError = MutableSharedFlow<String>(1)
     val unknownError = _unknownError.asSharedFlow()
 
+    private val origin: String = checkNotNull(savedStateHandle.get<String>(ORIGIN_KEY))
+        .also { data -> _state.update { state.value.copy(origin = data) } }
+
+    private val destination: String = checkNotNull(savedStateHandle.get<String>(DESTINATION_KEY))
+        .also { data -> _state.update { state.value.copy(destination = data) } }
+
     private val routeCeh = CoroutineExceptionHandler { _, e ->
-        if (e is KamoException) {
-            _error.tryEmit(e)
-        } else {
-            _unknownError.tryEmit("경로 조회 API의 에러")
+        viewModelScope.launch {
+            if (e is KamoException) {
+                _error.emit(e)
+            } else {
+                _unknownError.emit("경로 조회 API의 에러")
+            }
         }
     }
 
     private val distanceTimeCeh = CoroutineExceptionHandler { _, e ->
-        if (e is KamoException) {
-            _error.tryEmit(e)
-        } else {
-            _unknownError.tryEmit("시간 / 거리 조회 API의 에러")
+        viewModelScope.launch {
+            if (e is KamoException) {
+                _error.emit(e)
+            } else {
+                _unknownError.emit("시간 / 거리 조회 API의 에러")
+            }
         }
     }
 
@@ -84,9 +92,12 @@ internal class MapViewModel @Inject constructor(
                 }
             }
         }
+
     }
 
     data class State(
+        val origin: String = "",
+        val destination: String = "",
         val routes: List<Route> = emptyList(),
         val distanceTime: DistanceTime? = null,
     )
