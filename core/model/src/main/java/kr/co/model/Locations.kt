@@ -1,4 +1,4 @@
-package kr.co.domain.model
+package kr.co.model
 
 data class Locations(
     val locations: List<Location>,

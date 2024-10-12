@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal data class GetLocationsResponse(
+data class GetLocationsResponse(
 
     @SerialName("locations")
     val locations: List<Location>,

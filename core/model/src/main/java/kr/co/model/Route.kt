@@ -1,6 +1,6 @@
-package kr.co.domain.model
+package kr.co.model
 
-import kr.co.domain.model.type.TrafficStateType
+import kr.co.model.type.TrafficStateType
 
 data class Route(
     val points: List<Point>,

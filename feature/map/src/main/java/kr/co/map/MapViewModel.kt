@@ -11,8 +11,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kr.co.common.model.KamoException
-import kr.co.domain.model.DistanceTime
-import kr.co.domain.model.Route
 import kr.co.domain.usecase.GetDistanceTimeUseCase
 import kr.co.domain.usecase.GetRoutesUseCase
 import javax.inject.Inject
@@ -96,7 +94,7 @@ internal class MapViewModel @Inject constructor(
     data class State(
         val origin: String = "",
         val destination: String = "",
-        val routes: List<Route> = emptyList(),
-        val distanceTime: DistanceTime? = null,
+        val routes: List<kr.co.model.Route> = emptyList(),
+        val distanceTime: kr.co.model.DistanceTime? = null,
     )
 }

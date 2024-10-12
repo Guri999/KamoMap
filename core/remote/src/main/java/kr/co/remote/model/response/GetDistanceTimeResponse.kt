@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal data class GetDistanceTimeResponse(
+data class GetDistanceTimeResponse(
 
     @SerialName("distance")
     val distance: Int,

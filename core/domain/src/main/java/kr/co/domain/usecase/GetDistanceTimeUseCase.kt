@@ -1,7 +1,7 @@
 package kr.co.domain.usecase
 
 import kr.co.domain.LocationRepository
-import kr.co.domain.model.DistanceTime
+import kr.co.model.DistanceTime
 import javax.inject.Inject
 
 class GetDistanceTimeUseCase @Inject constructor(

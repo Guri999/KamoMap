@@ -1,27 +1,23 @@
 package kr.co.data
 
+import kr.co.data.mapper.DistanceTimeDataMapper
 import kr.co.data.mapper.LocationsDataMapper
 import kr.co.data.mapper.RoutesDataMapper
-import kr.co.data.model.DistanceTimeDataMapper
-import kr.co.data.source.remote.LocationRemoteDataSource
 import kr.co.domain.LocationRepository
-import kr.co.domain.model.DistanceTime
-import kr.co.domain.model.Locations
-import kr.co.domain.model.Route
 import javax.inject.Inject
 
 internal class LocationRepositoryImpl @Inject constructor(
-    private val remote: LocationRemoteDataSource,
+    private val remote: kr.co.remote.LocationRemoteDataSource,
 ) : LocationRepository {
 
-    override suspend fun getLocations(): Locations =
+    override suspend fun getLocations(): kr.co.model.Locations =
         remote.getLocations()
             .let(LocationsDataMapper::convert)
 
     override suspend fun getRoutes(
         origin: String,
         destination: String,
-    ): List<Route> =
+    ): List<kr.co.model.Route> =
         remote.getRoutes(
             origin = origin,
             destination = destination,
@@ -30,7 +26,7 @@ internal class LocationRepositoryImpl @Inject constructor(
     override suspend fun getDistanceWithTime(
         origin: String,
         destination: String,
-    ): DistanceTime =
+    ): kr.co.model.DistanceTime =
         remote.getDistanceWithTime(
             origin = origin,
             destination = destination,

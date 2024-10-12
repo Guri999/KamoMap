@@ -18,4 +18,4 @@ internal const val ksp = "ksp"
 
 internal const val debugImplementation = "debugImplementation"
 
-internal const val androidTestImplementations = "androidTestImplementations"
+internal const val androidTestImplementation = "androidTestImplementation"

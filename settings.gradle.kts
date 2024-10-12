@@ -33,6 +33,7 @@ include(":core:data")
 include(":core:domain")
 include(":core:common")
 include(":core:navigation")
+include(":core:model")
 
 include(":feature:main")
 include(":feature:map")

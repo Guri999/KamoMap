@@ -4,7 +4,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import kr.co.location.model.LocationsUiState.Locations.Location
 
-typealias LocationsEntity = kr.co.domain.model.Locations
+typealias LocationsEntity = kr.co.model.Locations
 
 @Stable
 internal sealed interface LocationsUiState {

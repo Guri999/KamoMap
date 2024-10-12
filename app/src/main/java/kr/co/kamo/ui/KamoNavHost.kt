@@ -17,7 +17,7 @@ import kr.co.navigation.KamoRoute
 import kr.co.ui.theme.KamoTheme
 
 @Composable
-internal fun KakaoNavHost(
+internal fun KamoNavHost(
     navController: NavHostController = rememberNavController(),
 ) {
     var navRoute by remember { mutableStateOf<KamoRoute>(KamoRoute.Splash) }
@@ -27,14 +27,14 @@ internal fun KakaoNavHost(
         navRoute = KamoRoute.Main
     }
 
-    KakaoNavScreen(
+    KamoNavScreen(
         startDestinationRoute = navRoute,
         navController = navController
     )
 }
 
 @Composable
-private fun KakaoNavScreen(
+private fun KamoNavScreen(
     navController: NavHostController,
     startDestinationRoute: KamoRoute = KamoRoute.Splash,
 ) {
@@ -47,13 +47,5 @@ private fun KakaoNavScreen(
         }
 
         mainNavGraph()
-    }
-}
-
-@Preview
-@Composable
-private fun Preview() {
-    KamoTheme {
-
     }
 }

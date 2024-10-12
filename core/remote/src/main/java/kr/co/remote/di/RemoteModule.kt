@@ -5,8 +5,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
-import kr.co.data.source.remote.LocationRemoteDataSource
-import kr.co.remote.LocationRemoteDataSourceImpl
+import kr.co.remote.LocationRemoteDataSource
+import kr.co.remote.implementation.LocationRemoteDataSourceImpl
 import javax.inject.Singleton
 
 @Module

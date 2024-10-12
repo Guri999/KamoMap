@@ -1,7 +1,7 @@
 package kr.co.domain.usecase
 
 import kr.co.domain.LocationRepository
-import kr.co.domain.model.Route
+import kr.co.model.Route
 import javax.inject.Inject
 import javax.inject.Singleton
 

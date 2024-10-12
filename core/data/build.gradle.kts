@@ -9,5 +9,7 @@ setNamespace("core.data")
 
 dependencies {
     implementation(projects.core.domain)
+    implementation(projects.core.remote)
     implementation(projects.core.common)
+    implementation(projects.core.model)
 }

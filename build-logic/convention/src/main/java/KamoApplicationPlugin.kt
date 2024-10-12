@@ -1,4 +1,5 @@
 import com.android.build.api.dsl.ApplicationExtension
+import kr.co.build.androidTestImplementation
 import kr.co.build.configurations
 import kr.co.build.configureCompose
 import kr.co.build.configureHilt
@@ -7,6 +8,7 @@ import kr.co.build.groupId
 import kr.co.build.implementation
 import kr.co.build.libs
 import kr.co.build.targetSdk
+import kr.co.build.testImplementation
 import kr.co.build.versionCode
 import kr.co.build.versionName
 import org.gradle.api.Plugin
@@ -55,6 +57,16 @@ internal class KamoApplicationPlugin : Plugin<Project> {
                     configurations(
                         implementation,
                         libs.timber
+                    )
+                    
+                    configurations(
+                        testImplementation,
+                        libs.junit,
+                    )
+
+                    configurations(
+                        androidTestImplementation,
+                        libs.androidx.junit
                     )
                 }
             }

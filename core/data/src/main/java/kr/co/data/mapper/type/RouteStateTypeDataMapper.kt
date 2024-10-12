@@ -1,18 +1,18 @@
 package kr.co.data.mapper.type
 
 import kr.co.common.mapper.Mapper
-import kr.co.data.model.type.TrafficStateDataType
-import kr.co.domain.model.type.TrafficStateType
+import kr.co.remote.model.type.TrafficStateRemoteType
 
-internal object RouteStateTypeDataMapper : Mapper<TrafficStateDataType, TrafficStateType> {
-    override fun convert(left: TrafficStateDataType): TrafficStateType {
+internal object RouteStateTypeDataMapper :
+    Mapper<TrafficStateRemoteType, kr.co.model.type.TrafficStateType> {
+    override fun convert(left: TrafficStateRemoteType): kr.co.model.type.TrafficStateType {
         return when (left) {
-            TrafficStateDataType.UNKNOWN -> TrafficStateType.UNKNOWN
-            TrafficStateDataType.JAM -> TrafficStateType.JAM
-            TrafficStateDataType.DELAY -> TrafficStateType.DELAY
-            TrafficStateDataType.SLOW -> TrafficStateType.SLOW
-            TrafficStateDataType.NORMAL -> TrafficStateType.NORMAL
-            TrafficStateDataType.BLOCK -> TrafficStateType.BLOCK
+            TrafficStateRemoteType.UNKNOWN -> kr.co.model.type.TrafficStateType.UNKNOWN
+            TrafficStateRemoteType.JAM -> kr.co.model.type.TrafficStateType.JAM
+            TrafficStateRemoteType.DELAY -> kr.co.model.type.TrafficStateType.DELAY
+            TrafficStateRemoteType.SLOW -> kr.co.model.type.TrafficStateType.SLOW
+            TrafficStateRemoteType.NORMAL -> kr.co.model.type.TrafficStateType.NORMAL
+            TrafficStateRemoteType.BLOCK -> kr.co.model.type.TrafficStateType.BLOCK
         }
     }
 

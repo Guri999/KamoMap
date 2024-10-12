@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import dagger.hilt.android.AndroidEntryPoint
-import kr.co.kamo.ui.KakaoNavHost
+import kr.co.kamo.ui.KamoNavHost
 import kr.co.ui.theme.KamoTheme
 
 @AndroidEntryPoint
@@ -16,7 +16,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             KamoTheme {
-                KakaoNavHost()
+                KamoNavHost()
             }
         }
     }

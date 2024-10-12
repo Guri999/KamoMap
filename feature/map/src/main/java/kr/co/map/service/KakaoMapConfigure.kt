@@ -14,7 +14,6 @@ import com.kakao.vectormap.route.RouteLineSegment
 import com.kakao.vectormap.route.RouteLineStyle
 import com.kakao.vectormap.route.RouteLineStyles
 import com.kakao.vectormap.route.RouteLineStylesSet
-import kr.co.domain.model.Route
 import kr.co.ui.theme.RouteBlock
 import kr.co.ui.theme.RouteDelay
 import kr.co.ui.theme.RouteJam
@@ -25,7 +24,7 @@ import timber.log.Timber
 
 internal fun MapView.setCallBack(
     reportMapError: (Exception?) -> Unit,
-    routes: List<Route>,
+    routes: List<kr.co.model.Route>,
 ): MapView {
     start(
         object : MapLifeCycleCallback() {
@@ -108,7 +107,7 @@ private class KakaoMapController(
 }
 
 private fun KakaoMapController.drawRoute(
-    routes: List<Route>,
+    routes: List<kr.co.model.Route>,
 ) {
     routes.map { route ->
         RouteLineSegment.from(

@@ -56,10 +56,6 @@ internal fun Project.configureCompose(
                 configuration = debugImplementation,
                 libs.compose.ui.tooling,
             )
-
-            configurations(
-                configuration = androidTestImplementations,
-            )
         }
     }
 }

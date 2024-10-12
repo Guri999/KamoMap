@@ -1,6 +1,6 @@
-package kr.co.data.model.type
+package kr.co.model.type
 
-enum class TrafficStateDataType {
+enum class TrafficStateType {
     UNKNOWN,
     JAM,
     DELAY,

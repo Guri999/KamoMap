@@ -1,7 +1,7 @@
 package kr.co.domain.usecase
 
 import kr.co.domain.LocationRepository
-import kr.co.domain.model.Locations
+import kr.co.model.Locations
 import javax.inject.Inject
 
 class GetLocationsUseCase @Inject constructor(
