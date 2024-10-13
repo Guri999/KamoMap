@@ -60,7 +60,7 @@ internal fun MapRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     var mapView by remember { mutableStateOf<MapView?>(null) }
 
-    DisposableEffect(lifecycleOwner) {
+    DisposableEffect(mapView) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
                 Lifecycle.Event.ON_RESUME -> mapView?.resume()
