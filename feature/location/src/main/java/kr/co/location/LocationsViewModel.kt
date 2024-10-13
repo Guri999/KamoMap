@@ -4,14 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -36,14 +35,16 @@ internal class LocationsViewModel @Inject constructor(
     private val getRoutesUseCase: GetRoutesUseCase,
 ) : ViewModel() {
 
-    private val _intentFlow = MutableSharedFlow<LocationsIntent>(extraBufferCapacity = 64)
+    private val _intentFlow = MutableSharedFlow<LocationsIntent>(
+        extraBufferCapacity = 64,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
     private val intentFlow = _intentFlow.asSharedFlow()
 
     private val initial = LocationsViewState.initial()
 
     val viewState: StateFlow<LocationsViewState> =
         intentFlow
-            .filtered()
             .debugLog("intentFlow")
             .toLocationUiChangedFlow()
             .debugLog("uiStateFlow")
@@ -54,12 +55,6 @@ internal class LocationsViewModel @Inject constructor(
                 started = SharingStarted.Eagerly,
                 initialValue = initial
             )
-
-    private fun SharedFlow<LocationsIntent>.filtered(): Flow<LocationsIntent> =
-        merge(
-            filterIsInstance<LocationsIntent.Initial>(),
-            filterNot { it is LocationsIntent.Initial }
-        )
 
     private fun Flow<LocationsIntent>.toLocationUiChangedFlow(): Flow<LocationsUiState> =
         merge(
