@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="main_route_snack_error">error: %1$s</string>
+    <string name="main_route_locations_api">출발지 / 도착지 API</string>
+    <string name="main_route_routes_api">경로 API</string>
+    <string name="main_route_distance_time_api">거리 시간 API</string>
+</resources>

@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -45,6 +46,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kakao.vectormap.MapView
 import kotlinx.coroutines.flow.collectLatest
 import kr.co.common.util.timeFormat
+import kr.co.kamo.feature.map.R
 import kr.co.map.service.setCallBack
 import kr.co.ui.theme.KamoTheme
 import java.util.Locale
@@ -226,14 +228,13 @@ private fun BoxScope.MapWidgetScreen(
             .align(Alignment.BottomEnd),
     ) {
         Text(
-            text = "시간 : ${timeFormat(time)}분\n"
-                    + "거리 : ${
-                String.format(
+            text = stringResource(
+                R.string.estimated_time, timeFormat(time), String.format(
                     Locale.getDefault(),
                     "%,d",
                     distance
                 )
-            }m",
+            ),
             style = KamoTheme.typography.body1R,
             color = KamoTheme.colors.white,
         )
@@ -249,7 +250,7 @@ private fun Preview() {
                 .background(Color.White)
                 .fillMaxSize()
         ) {
-            MapWidgetScreen("서울역", "홍대입구역", 3000, 2000) {}
+            MapWidgetScreen("test1", "test9999", 3000, 2000) {}
         }
     }
 

@@ -31,6 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -40,6 +42,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kr.co.kamo.feature.location.R
 import kr.co.location.model.LocationsIntent
 import kr.co.location.model.LocationsUiState
 import kr.co.location.model.LocationsViewState
@@ -100,9 +103,8 @@ private fun LocationsContent(
     when (state.uiState) {
         is LocationsUiState.Error -> {
             val error = state.uiState
-            if (error.code != null && error.message != null && error.localizedMessage != null) {
+            if (error.code != null && error.message != null) {
                 KamoErrorBottomSheet(
-                    title = error.localizedMessage,
                     start = error.origin,
                     end = error.destination,
                     code = error.code,
@@ -148,7 +150,7 @@ private fun LocationsScreen(
             Spacer(modifier = Modifier.height(40.dp))
 
             Text(
-                text = "경로 찾기",
+                text = stringResource(R.string.location_title),
                 style = KamoTheme.typography.title1Sb,
                 color = KamoTheme.colors.black
             )
@@ -157,7 +159,7 @@ private fun LocationsScreen(
         }
 
         items(model) {
-            PathBox(
+            LocationBox(
                 start = it.origin,
                 end = it.destination,
                 onPathClick = onPathClick
@@ -174,11 +176,12 @@ private fun LocationsScreen(
 }
 
 @Composable
-private fun PathBox(
+private fun LocationBox(
     start: String,
     end: String,
     onPathClick: (LocationPath) -> Unit = {},
 ) {
+    val context = LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -193,7 +196,8 @@ private fun PathBox(
             .background(KamoTheme.colors.white)
             .padding(24.dp)
             .semantics {
-                contentDescription = "$start -> $end 카카오 맵으로 경로 찾기"
+                contentDescription =
+                    context.getString(R.string.on_click_location_box_description, start, end)
             },
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -244,8 +248,8 @@ private fun Preview() {
         LocationsScreen(
             model = listOf(
                 LocationsUiState.Locations.Location(
-                    origin = "에버랜드",
-                    destination = "서울랜드"
+                    origin = "test1",
+                    destination = "test3"
                 ),
                 LocationsUiState.Locations.Location(
                     origin = "서울역",

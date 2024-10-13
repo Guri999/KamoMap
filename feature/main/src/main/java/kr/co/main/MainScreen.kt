@@ -1,13 +1,16 @@
 package kr.co.main
 
+import android.annotation.SuppressLint
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
+import kr.co.kamo.feature.main.R
 import kr.co.main.navigation.MainNavHost
 import kr.co.ui.widget.KamoSnackBarHost
 
@@ -15,13 +18,21 @@ import kr.co.ui.widget.KamoSnackBarHost
 internal fun MainRoute(
     navController: NavHostController = rememberNavController(),
 ) {
+    val context = LocalContext.current
     val snackBarHostState = remember { SnackbarHostState() }
 
     val coroutineScope = rememberCoroutineScope()
     val onShowErrorSnackBar: (message: String) -> Unit = { message ->
         coroutineScope.launch {
             snackBarHostState.showSnackbar(
-                message = message
+                message = context.getString(
+                    R.string.main_route_snack_error, when (message) {
+                        LOCATION_API -> context.getString(R.string.main_route_locations_api)
+                        ROUTES_API -> context.getString(R.string.main_route_routes_api)
+                        DISTANCE_TIME_API -> context.getString(R.string.main_route_distance_time_api)
+                        else -> message
+                    }
+                )
             )
         }
     }
@@ -33,6 +44,7 @@ internal fun MainRoute(
     )
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 internal fun MainScreen(
     navController: NavHostController,
@@ -48,3 +60,7 @@ internal fun MainScreen(
         )
     }
 }
+
+private const val LOCATION_API = "location"
+private const val ROUTES_API = "routes"
+private const val DISTANCE_TIME_API = "distance-time"

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="estimated_time">시간 : %1$s분\n거리 : %2$sm</string>
+</resources>

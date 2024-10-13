@@ -17,14 +17,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kr.co.kamo.core.ui.R
 import kr.co.ui.theme.KamoTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun KamoErrorBottomSheet(
-    title: String,
     message: String,
     start: String? = null,
     end: String? = null,
@@ -47,7 +48,7 @@ fun KamoErrorBottomSheet(
                 .padding(16.dp),
         ) {
             Text(
-                text = title,
+                text = if(code == 4041) "경로조회 실패" else "오류가 발생했습니다.",
                 style = KamoTheme.typography.title1Sb,
                 color = KamoTheme.colors.black,
             )
@@ -61,20 +62,20 @@ fun KamoErrorBottomSheet(
             ) {
                 if (start != null && end != null) {
                     Text(
-                        text = "경로 : $start ~ $end",
+                        text = stringResource(R.string.occurrence_location, start, end),
                         style = KamoTheme.typography.body1R,
                         color = KamoTheme.colors.black
                     )
                 }
                 if (code != null) {
                     Text(
-                        text = "code : $code",
+                        text = stringResource(R.string.error_code, code),
                         style = KamoTheme.typography.body1R,
                         color = KamoTheme.colors.black
                     )
                 }
                 Text(
-                    text = "message : $message",
+                    text = stringResource(R.string.error_message, message),
                     style = KamoTheme.typography.body1R,
                     color = KamoTheme.colors.black
                 )
@@ -91,7 +92,7 @@ fun KamoErrorBottomSheet(
                 )
             ) {
                 Text(
-                    text = "확인",
+                    text = stringResource(R.string.confirm_button_text),
                     style = KamoTheme.typography.body1R,
                     color = KamoTheme.colors.black
                 )
@@ -106,7 +107,6 @@ fun KamoErrorBottomSheet(
 private fun KamoErrorBottomSheetPreview() {
     KamoTheme {
         KamoErrorBottomSheet(
-            title = "경로조회 실패",
             start = "에버랜드",
             end = "서울랜드",
             code = 4041,

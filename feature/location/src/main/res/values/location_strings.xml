@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="location_title">경로 찾기</string>
+    <string name="on_click_location_box_description"><![CDATA[%1$s -> %2$s 카카오 맵으로 경로 찾기]]></string>
+</resources>

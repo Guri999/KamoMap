@@ -88,7 +88,6 @@ internal class LocationsViewModel @Inject constructor(
                         LocationsUiState.Error(
                             code = result.error.code,
                             message = result.error.message,
-                            localizedMessage = result.error.localizedMessage,
                             location = result.error.location,
                         )
                 }
@@ -106,14 +105,14 @@ internal class LocationsViewModel @Inject constructor(
                 .let { result ->
                     when (result) {
                         is EntityWrapper.Success -> LocationsUiState.Navigate(path.location)
-                        is EntityWrapper.Error -> LocationsUiState.Error(
-                            code = result.error.code,
-                            message = result.error.message,
-                            localizedMessage = result.error.localizedMessage,
-                            origin = path.location.first,
-                            destination = path.location.second,
-                            location = result.error.location
-                        )
+                        is EntityWrapper.Error ->
+                            LocationsUiState.Error(
+                                code = result.error.code,
+                                message = result.error.message,
+                                origin = path.location.first,
+                                destination = path.location.second,
+                                location = result.error.location
+                            )
                     }
                 }
         }.debugLog("Routes Checked")

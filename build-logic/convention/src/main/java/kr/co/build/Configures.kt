@@ -47,6 +47,7 @@ internal fun Project.configureCompose(
         dependencies {
             configurations(
                 configuration = implementation,
+                platform(libs.compose.bom),
                 libs.bundles.composes,
                 libs.bundles.androidx,
                 libs.compose.ui.tooling.preview,

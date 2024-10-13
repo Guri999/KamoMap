@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="occurrence_location">경로 : %1$s ~ %2$s</string>
+    <string name="error_code">code : %1$s</string>
+    <string name="error_message">message : %1$s</string>
+    <string name="confirm_button_text">확인</string>
+</resources>

@@ -54,7 +54,6 @@ internal sealed interface LocationsUiState {
     data class Error(
         val code: Int?,
         val message: String?,
-        val localizedMessage: String?,
         val origin: String? = null,
         val destination: String? = null,
         val location: String,
