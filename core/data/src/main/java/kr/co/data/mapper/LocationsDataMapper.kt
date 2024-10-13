@@ -1,9 +1,9 @@
 package kr.co.data.mapper
 
-import kr.co.common.mapper.Mapper
+import kr.co.common.mapper.ApiMapper
 import kr.co.remote.model.response.GetLocationsResponse
 
-internal object LocationsDataMapper : Mapper<GetLocationsResponse, kr.co.model.Locations> {
+internal object LocationsDataMapper : ApiMapper<GetLocationsResponse, kr.co.model.Locations>() {
     override fun convert(left: GetLocationsResponse): kr.co.model.Locations {
         return with(left) {
             kr.co.model.Locations(

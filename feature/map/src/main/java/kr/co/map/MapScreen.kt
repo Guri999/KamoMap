@@ -85,15 +85,11 @@ internal fun MapRoute(
     }
 
     LaunchedEffect(Unit) {
-        with(viewModel) {
-            merge(
-                error.transform { emit(it.message.orEmpty()) },
-                unknownError,
-            ).collectLatest {
-                onShowErrorSnackBar(it)
-                popBackStack()
-            }
+        viewModel.error.collectLatest {
+            onShowErrorSnackBar(it.location)
+            popBackStack()
         }
+
     }
 
     BackHandler {

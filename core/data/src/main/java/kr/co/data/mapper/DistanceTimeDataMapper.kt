@@ -1,12 +1,13 @@
 package kr.co.data.mapper
 
-import kr.co.common.mapper.Mapper
+import kr.co.common.mapper.ApiMapper
+import kr.co.model.DistanceTime
 import kr.co.remote.model.response.GetDistanceTimeResponse
 
-internal object DistanceTimeDataMapper : Mapper<GetDistanceTimeResponse, kr.co.model.DistanceTime> {
-    override fun convert(left: GetDistanceTimeResponse): kr.co.model.DistanceTime {
+internal object DistanceTimeDataMapper : ApiMapper<GetDistanceTimeResponse, DistanceTime>() {
+    override fun convert(left: GetDistanceTimeResponse): DistanceTime {
         return with(left) {
-            kr.co.model.DistanceTime(
+            DistanceTime(
                 distance = distance,
                 time = time,
             )

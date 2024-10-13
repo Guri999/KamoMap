@@ -19,9 +19,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import kr.co.common.ext.debugLog
 import kr.co.common.ext.startWith
-import kr.co.common.model.KamoException
+import kr.co.common.model.EntityWrapper
 import kr.co.domain.usecase.GetLocationsUseCase
 import kr.co.domain.usecase.GetRoutesUseCase
 import kr.co.location.model.LocationsIntent
@@ -79,55 +80,47 @@ internal class LocationsViewModel @Inject constructor(
         }
 
     private fun getLocationsFlow(): Flow<LocationsUiState> =
-        try {
-            flow { emit(getLocationsUseCase()) }
-                .map(LocationsUiState::Locations)
-                .startWith(LocationsUiState.Loading)
-                .debugLog("getLocations")
-        } catch (e: Exception) {
-            if (e is KamoException) {
-                LocationsUiState.Error.KamoError(
-                    code = e.code ?: 0,
-                    message = e.message ?: "Unknown Error",
-                    localizedMessage = e.localizedMessage ?: "알 수없는 에러",
-                )
-            } else {
-                LocationsUiState.Error.UnknownError(
-                    apiName = "출발지 / 도착지 리스트 API",
-                )
-            }.let {
-                flow { emit(it) }
-            }.debugLog("Locations Error")
-        }
+        flow { emit(getLocationsUseCase()) }
+            .map { result ->
+                when (result) {
+                    is EntityWrapper.Success -> LocationsUiState.Locations(result.data)
+                    is EntityWrapper.Error ->
+                        LocationsUiState.Error(
+                            code = result.error.code,
+                            message = result.error.message,
+                            localizedMessage = result.error.localizedMessage,
+                            errorUrl = result.error.location,
+                        )
+                }
+            }
+            .startWith(LocationsUiState.Loading)
+            .debugLog("getLocations")
 
 
     private fun Flow<LocationsIntent.OnPathClick>.toRoutesCheckedFlow(): Flow<LocationsUiState> =
         map { path ->
-            try {
-                GetRoutesUseCase.Params(
-                    origin = path.location.first,
-                    destination = path.location.second
-                ).let { getRoutesUseCase(it) }
-
-                LocationsUiState.Navigate(path.location)
-            } catch (e: Exception) {
-                if (e is KamoException) {
-                    LocationsUiState.Error.KamoError(
-                        code = e.code,
-                        message = e.message ?: "Unknown Error",
-                        localizedMessage = e.localizedMessage ?: "알 수없는 에러",
-                        origin = path.location.first,
-                        destination = path.location.second,
-                    )
-                } else {
-                    LocationsUiState.Error.UnknownError(
-                        apiName = "경로 조회 API",
-                    )
+            GetRoutesUseCase.Params(
+                origin = path.location.first,
+                destination = path.location.second
+            ).let { getRoutesUseCase(it) }
+                .let { result ->
+                    when (result) {
+                        is EntityWrapper.Success -> LocationsUiState.Navigate(path.location)
+                        is EntityWrapper.Error -> LocationsUiState.Error(
+                            code = result.error.code,
+                            message = result.error.message,
+                            localizedMessage = result.error.localizedMessage,
+                            origin = path.location.first,
+                            destination = path.location.second,
+                            errorUrl = result.error.location
+                        )
+                    }
                 }
-            }
         }.debugLog("Routes Checked")
 
     fun processIntent(intent: LocationsIntent) {
-        _intentFlow.tryEmit(intent)
+        viewModelScope.launch {
+            _intentFlow.emit(intent)
+        }
     }
 }

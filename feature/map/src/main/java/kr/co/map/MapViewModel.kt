@@ -4,12 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kr.co.common.model.EntityWrapper
 import kr.co.common.model.KamoException
 import kr.co.domain.usecase.GetDistanceTimeUseCase
 import kr.co.domain.usecase.GetRoutesUseCase
@@ -29,28 +31,10 @@ internal class MapViewModel @Inject constructor(
     private val _unknownError = MutableSharedFlow<String>(1)
     val unknownError = _unknownError.asSharedFlow()
 
-    private val routeCeh = CoroutineExceptionHandler { _, e ->
-        viewModelScope.launch {
-            if (e is KamoException) {
-                _error.emit(e)
-            } else {
-                _unknownError.emit("경로 조회 API의 에러")
-            }
-        }
-    }
-
-    private val distanceTimeCeh = CoroutineExceptionHandler { _, e ->
-        viewModelScope.launch {
-            if (e is KamoException) {
-                _error.emit(e)
-            } else {
-                _unknownError.emit("시간 / 거리 조회 API의 에러")
-            }
-        }
-    }
-
     fun reportMapError(e: Exception?) {
-        _unknownError.tryEmit("KakaoMap SDK Error")
+        viewModelScope.launch {
+            _unknownError.emit("KakaoMap SDK Error")
+        }
     }
 
     fun initialize(path: Pair<String, String>) {
@@ -64,31 +48,37 @@ internal class MapViewModel @Inject constructor(
     }
 
     private fun initializeRoutes() {
-        viewModelScope.launch(routeCeh) {
-            GetRoutesUseCase.Params(
-                origin = state.value.origin,
-                destination = state.value.destination
-            ).run {
-                getRoutesUseCase(this)
-            }.also { data ->
-                _state.update {
-                    state.value.copy(routes = data)
+        viewModelScope.launch {
+            val deferred = async {
+                GetRoutesUseCase.Params(
+                    origin = state.value.origin,
+                    destination = state.value.destination
+                ).run {
+                    getRoutesUseCase(this)
+                }.also { result ->
+                    when(result) {
+                        is EntityWrapper.Success -> _state.update { state.value.copy(routes = result.data) }
+                        is EntityWrapper.Error -> _error.emit(result.error)
+                    }
                 }
             }
+
+            async {
+                GetDistanceTimeUseCase.Params(
+                    origin = state.value.origin,
+                    destination = state.value.destination
+                ).run {
+                    getDistanceTimeUseCase(this)
+                }.also { result ->
+                    when(result) {
+                        is EntityWrapper.Success -> _state.update { state.value.copy(distanceTime = result.data) }
+                        is EntityWrapper.Error -> _error.emit(result.error)
+                    }
+                }
+            }.await()
+            deferred.await()
         }
 
-        viewModelScope.launch(distanceTimeCeh) {
-            GetDistanceTimeUseCase.Params(
-                origin = state.value.origin,
-                destination = state.value.destination
-            ).run {
-                getDistanceTimeUseCase(this)
-            }.also { data ->
-                _state.update {
-                    state.value.copy(distanceTime = data)
-                }
-            }
-        }
     }
 
     data class State(

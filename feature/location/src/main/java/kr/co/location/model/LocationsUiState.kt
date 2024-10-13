@@ -42,14 +42,7 @@ internal sealed interface LocationsUiState {
         data class Location(
             val origin: String,
             val destination: String,
-        ) {
-            companion object {
-                val Default = Location(
-                    origin = "",
-                    destination = ""
-                )
-            }
-        }
+        )
     }
 
     @Immutable
@@ -57,22 +50,16 @@ internal sealed interface LocationsUiState {
         val location: Pair<String, String>,
     ) : LocationsUiState
 
-    sealed interface Error : LocationsUiState {
+    @Immutable
+    data class Error(
+        val code: Int?,
+        val message: String?,
+        val localizedMessage: String?,
+        val origin: String? = null,
+        val destination: String? = null,
+        val errorUrl: String,
+    ) : LocationsUiState
 
-        @Immutable
-        data class KamoError(
-            val code: Int?,
-            val message: String,
-            val localizedMessage: String,
-            val origin: String? = null,
-            val destination: String? = null,
-        ) : Error
-
-        @Immutable
-        data class UnknownError(
-            val apiName: String,
-        ) : Error
-    }
 }
 
 @Stable

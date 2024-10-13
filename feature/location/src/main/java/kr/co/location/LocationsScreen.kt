@@ -24,7 +24,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -43,16 +42,14 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kr.co.location.model.LocationsIntent
 import kr.co.location.model.LocationsUiState
+import kr.co.location.model.LocationsViewState
 import kr.co.ui.icon.KamoIcon
 import kr.co.ui.icon.kamoicon.Car
 import kr.co.ui.theme.KamoTheme
 import kr.co.ui.widget.KamoErrorBottomSheet
 
 private typealias LocationPath = Pair<String, String>
-private typealias Error = LocationsUiState.Error.KamoError
-private typealias UnknownError = LocationsUiState.Error.UnknownError
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun LocationsRoute(
     viewModel: LocationsViewModel = hiltViewModel(),
@@ -61,10 +58,8 @@ internal fun LocationsRoute(
 ) {
     val state by viewModel.viewState.collectAsStateWithLifecycle()
 
-    DisposableEffect(Unit) {
+    LaunchedEffect(Unit) {
         viewModel.processIntent(LocationsIntent.Initial)
-
-        onDispose { }
     }
 
     LaunchedEffect(Unit) {
@@ -79,26 +74,44 @@ internal fun LocationsRoute(
         }
     }
 
+    LocationsContent(
+        state = state,
+        onPathClick = { viewModel.processIntent(LocationsIntent.OnPathClick(it)) },
+        onFallBack = { viewModel.processIntent(LocationsIntent.Initial) },
+        onShowErrorSnackBar = onShowErrorSnackBar,
+        navigateToMap = navigateToMap
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun LocationsContent(
+    state: LocationsViewState,
+    onPathClick: (LocationPath) -> Unit = {},
+    onFallBack: () -> Unit = {},
+    onShowErrorSnackBar: (message: String) -> Unit = {},
+    navigateToMap: (LocationPath) -> Unit = {},
+) {
     LocationsScreen(
         model = state.model,
-        onPathClick = { viewModel.processIntent(LocationsIntent.OnPathClick(it)) }
+        onPathClick = onPathClick
     )
 
     when (state.uiState) {
-        is Error -> {
-            val error = state.uiState as Error
-            KamoErrorBottomSheet(
-                title = error.localizedMessage,
-                start = error.origin,
-                end = error.destination,
-                code = error.code,
-                message = error.message,
-                onDismissRequest = { viewModel.processIntent(LocationsIntent.Initial) }
-            )
-        }
-
-        is UnknownError -> {
-            onShowErrorSnackBar((state.uiState as UnknownError).apiName)
+        is LocationsUiState.Error -> {
+            val error = state.uiState
+            if (error.code != null && error.message != null && error.localizedMessage != null) {
+                KamoErrorBottomSheet(
+                    title = error.localizedMessage,
+                    start = error.origin,
+                    end = error.destination,
+                    code = error.code,
+                    message = error.message,
+                    onDismissRequest = onFallBack
+                )
+            } else {
+                onShowErrorSnackBar(error.errorUrl)
+            }
         }
 
         is LocationsUiState.Loading -> {
@@ -112,9 +125,7 @@ internal fun LocationsRoute(
             }
         }
 
-        is LocationsUiState.Navigate -> {
-            navigateToMap((state.uiState as LocationsUiState.Navigate).location)
-        }
+        is LocationsUiState.Navigate -> navigateToMap(state.uiState.location)
 
         else -> Unit
     }
