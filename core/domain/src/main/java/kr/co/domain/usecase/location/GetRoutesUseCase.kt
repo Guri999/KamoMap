@@ -1,7 +1,8 @@
-package kr.co.domain.usecase
+package kr.co.domain.usecase.location
 
 import kr.co.common.model.EntityWrapper
 import kr.co.domain.LocationRepository
+import kr.co.domain.usecase.CachedUseCase
 import kr.co.model.Route
 import javax.inject.Inject
 import javax.inject.Singleton

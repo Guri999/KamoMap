@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kr.co.common.model.EntityWrapper
-import kr.co.domain.usecase.GetDistanceTimeUseCase
-import kr.co.domain.usecase.GetRoutesUseCase
+import kr.co.domain.usecase.location.GetDistanceTimeUseCase
+import kr.co.domain.usecase.location.GetRoutesUseCase
 import javax.inject.Inject
 
 @HiltViewModel

@@ -17,14 +17,14 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kr.co.common.ext.debugLog
-import kr.co.common.ext.startWith
 import kr.co.common.model.EntityWrapper
-import kr.co.domain.usecase.GetLocationsUseCase
-import kr.co.domain.usecase.GetRoutesUseCase
+import kr.co.domain.usecase.location.GetLocationsUseCase
+import kr.co.domain.usecase.location.GetRoutesUseCase
 import kr.co.location.model.LocationsIntent
 import kr.co.location.model.LocationsUiState
 import kr.co.location.model.LocationsViewState
@@ -93,7 +93,7 @@ internal class LocationsViewModel @Inject constructor(
                         )
                 }
             }
-            .startWith(LocationsUiState.Loading)
+            .onStart { LocationsUiState.Loading }
             .debugLog("getLocations")
 
 
