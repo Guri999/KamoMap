@@ -110,7 +110,7 @@ private fun LocationsContent(
                     onDismissRequest = onFallBack
                 )
             } else {
-                onShowErrorSnackBar(error.errorUrl)
+                onShowErrorSnackBar(error.location)
             }
         }
 

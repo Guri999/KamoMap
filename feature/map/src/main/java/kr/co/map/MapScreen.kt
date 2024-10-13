@@ -44,8 +44,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kakao.vectormap.MapView
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.flow.transform
 import kr.co.common.util.timeFormat
 import kr.co.map.service.setCallBack
 import kr.co.ui.theme.KamoTheme

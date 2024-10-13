@@ -64,7 +64,7 @@ internal class LocationRemoteDataSourceImpl @Inject constructor(
             KamoException(
                 code = it.code,
                 message = it.message,
-                location = request.url.toString(),
+                errorUrl = request.url.toString(),
             )
         }.let { ApiResponse.Error(it) }
     }

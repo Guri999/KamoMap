@@ -57,7 +57,7 @@ internal sealed interface LocationsUiState {
         val localizedMessage: String?,
         val origin: String? = null,
         val destination: String? = null,
-        val errorUrl: String,
+        val location: String,
     ) : LocationsUiState
 
 }

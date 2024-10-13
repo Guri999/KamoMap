@@ -89,7 +89,7 @@ internal class LocationsViewModel @Inject constructor(
                             code = result.error.code,
                             message = result.error.message,
                             localizedMessage = result.error.localizedMessage,
-                            errorUrl = result.error.location,
+                            location = result.error.location,
                         )
                 }
             }
@@ -112,7 +112,7 @@ internal class LocationsViewModel @Inject constructor(
                             localizedMessage = result.error.localizedMessage,
                             origin = path.location.first,
                             destination = path.location.second,
-                            errorUrl = result.error.location
+                            location = result.error.location
                         )
                     }
                 }

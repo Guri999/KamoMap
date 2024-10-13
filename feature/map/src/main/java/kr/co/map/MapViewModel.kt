@@ -3,7 +3,6 @@ package kr.co.map
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,12 +27,9 @@ internal class MapViewModel @Inject constructor(
     private val _error: MutableSharedFlow<KamoException> = MutableSharedFlow(1)
     val error = _error.asSharedFlow()
 
-    private val _unknownError = MutableSharedFlow<String>(1)
-    val unknownError = _unknownError.asSharedFlow()
-
     fun reportMapError(e: Exception?) {
         viewModelScope.launch {
-            _unknownError.emit("KakaoMap SDK Error")
+            _error.emit(KamoException(errorUrl = "KakaoMap SDK Error"))
         }
     }
 
