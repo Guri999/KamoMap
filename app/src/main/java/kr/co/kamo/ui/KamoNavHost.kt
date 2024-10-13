@@ -23,7 +23,7 @@ internal fun KamoNavHost(
     var navRoute by remember { mutableStateOf<KamoRoute>(KamoRoute.Splash) }
 
     LaunchedEffect(Unit) {
-        delay(1_500)
+        delay(1_000)
         navRoute = KamoRoute.Main
     }
 

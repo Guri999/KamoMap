@@ -36,6 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -142,7 +143,7 @@ private fun LocationsScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(KamoTheme.colors.keyColor3)
+            .background(KamoTheme.colors.keyColor)
             .padding(horizontal = 20.dp)
             .navigationBarsPadding()
     ) {
@@ -150,9 +151,11 @@ private fun LocationsScreen(
             Spacer(modifier = Modifier.height(40.dp))
 
             Text(
+                modifier = Modifier.fillMaxWidth(),
                 text = stringResource(R.string.location_title),
-                style = KamoTheme.typography.title1Sb,
-                color = KamoTheme.colors.black
+                style = KamoTheme.typography.display2Sb,
+                color = KamoTheme.colors.black,
+                textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(24.dp))

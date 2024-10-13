@@ -74,24 +74,6 @@ private fun SplashScreen(
                 )
             }
         }
-
-        AnimatedVisibility(
-            modifier = Modifier.align(Alignment.BottomEnd),
-            visible = visible,
-            enter = slideIn(
-                animationSpec = tween(
-                    durationMillis = 600,
-                    delayMillis = 500
-                ),
-                initialOffset = { IntOffset(it.width, it.height) }
-            )
-        ) {
-            Image(
-                modifier = Modifier.align(Alignment.BottomEnd),
-                painter = painterResource(R.drawable.lion),
-                contentDescription = "Splash Character"
-            )
-        }
     }
 }
 
