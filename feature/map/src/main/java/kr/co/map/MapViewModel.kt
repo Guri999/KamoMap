@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kr.co.common.model.EntityWrapper
-import kr.co.common.model.KamoException
 import kr.co.domain.usecase.GetDistanceTimeUseCase
 import kr.co.domain.usecase.GetRoutesUseCase
 import javax.inject.Inject
@@ -24,12 +23,12 @@ internal class MapViewModel @Inject constructor(
     private val _state: MutableStateFlow<State> = MutableStateFlow(State())
     val state = _state.asStateFlow()
 
-    private val _error: MutableSharedFlow<KamoException> = MutableSharedFlow(1)
+    private val _error: MutableSharedFlow<String> = MutableSharedFlow(1)
     val error = _error.asSharedFlow()
 
     fun reportMapError(e: Exception?) {
         viewModelScope.launch {
-            _error.emit(KamoException(errorUrl = "KakaoMap SDK Error"))
+            _error.emit("KakaoMap SDK Error")
         }
     }
 
@@ -52,9 +51,9 @@ internal class MapViewModel @Inject constructor(
                 ).run {
                     getRoutesUseCase(this)
                 }.also { result ->
-                    when(result) {
+                    when (result) {
                         is EntityWrapper.Success -> _state.update { state.value.copy(routes = result.data) }
-                        is EntityWrapper.Error -> _error.emit(result.error)
+                        is EntityWrapper.Error -> _error.emit(result.error.location)
                     }
                 }
             }
@@ -66,9 +65,9 @@ internal class MapViewModel @Inject constructor(
                 ).run {
                     getDistanceTimeUseCase(this)
                 }.also { result ->
-                    when(result) {
+                    when (result) {
                         is EntityWrapper.Success -> _state.update { state.value.copy(distanceTime = result.data) }
-                        is EntityWrapper.Error -> _error.emit(result.error)
+                        is EntityWrapper.Error -> _error.emit(result.error.location)
                     }
                 }
             }.await()

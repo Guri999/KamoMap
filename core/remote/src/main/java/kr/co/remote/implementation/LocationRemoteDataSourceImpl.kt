@@ -9,9 +9,9 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.request
 import io.ktor.http.HttpHeaders
 import kr.co.common.model.ApiResponse
-import kr.co.common.model.KamoException
 import kr.co.remote.LocationRemoteDataSource
 import kr.co.remote.model.ApiError
+import kr.co.remote.model.LocationsException
 import kr.co.remote.model.response.GetDistanceTimeResponse
 import kr.co.remote.model.response.GetLocationsResponse
 import kr.co.remote.model.response.GetRoutesResponse
@@ -61,7 +61,7 @@ internal class LocationRemoteDataSourceImpl @Inject constructor(
 
 
         else -> body<ApiError>().let {
-            KamoException(
+            LocationsException(
                 code = it.code,
                 message = it.message,
                 errorUrl = request.url.toString(),

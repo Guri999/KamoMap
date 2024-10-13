@@ -84,7 +84,7 @@ internal fun MapRoute(
 
     LaunchedEffect(Unit) {
         viewModel.error.collectLatest {
-            onShowErrorSnackBar(it.location)
+            onShowErrorSnackBar(it)
             popBackStack()
         }
 
