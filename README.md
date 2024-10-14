@@ -56,7 +56,7 @@ MVW (Model-View-Whatever)
 - LocationsScreen(출발지 / 도착지 출력 화면)은 MVI패턴으로 구현 하였습니다. (단방향 아키텍처)
 - 맵 화면은 MVVM 패턴으로 구현 하였습니다.
 
-![Presentation](/document/Presentation Layer.png)
+![Presentation](/document/PresentationLayer.png)
 
 ## Detail
 
