@@ -9,9 +9,7 @@ plugins {
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.sgp) apply false
-    id("com.vanniktech.dependency.graph.generator") version "0.8.0"
 }
-
 buildscript {
     repositories {
         google()
@@ -20,4 +18,7 @@ buildscript {
 }
 tasks.register("clean", Delete::class.java) {
     delete(rootProject.layout.buildDirectory)
+}
+apply {
+    from("gradle/dependencyGraph.gradle")
 }

@@ -24,7 +24,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,10 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
 import kr.co.kamo.feature.location.R
-import kr.co.location.model.LocationsIntent
 import kr.co.location.model.LocationsUiState
 import kr.co.location.model.LocationsViewState
 import kr.co.ui.icon.KamoIcon
@@ -62,26 +58,10 @@ internal fun LocationsRoute(
 ) {
     val state by viewModel.viewState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
-        viewModel.processIntent(LocationsIntent.Initial)
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.viewState.collectLatest {
-            if (
-                it.uiState is LocationsUiState.Locations
-                && it.model.isEmpty()
-            ) {
-                delay(1_000)
-                viewModel.processIntent(LocationsIntent.Initial)
-            }
-        }
-    }
-
     LocationsContent(
         state = state,
-        onPathClick = { viewModel.processIntent(LocationsIntent.OnPathClick(it)) },
-        onFallBack = { viewModel.processIntent(LocationsIntent.Initial) },
+        onPathClick = viewModel::onPathClick,
+        onFallBack = viewModel::onFallBack,
         onShowErrorSnackBar = onShowErrorSnackBar,
         navigateToMap = navigateToMap
     )

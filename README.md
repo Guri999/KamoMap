@@ -40,4 +40,4 @@ Gradle [Version Catalog](/gradle/libs.versions.toml) 를 활용하여 종속성�
 
 Multi-module로 구성하였으며, 각 Feature마다 모듈 형태로 구성했습니다.
 
-![Module](/document/Module.png)
+![Module](/project.dot.png)

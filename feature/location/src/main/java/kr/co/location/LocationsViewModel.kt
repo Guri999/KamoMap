@@ -112,9 +112,22 @@ internal class LocationsViewModel @Inject constructor(
                 }
         }.debugLog("Routes Checked")
 
-    fun processIntent(intent: LocationsIntent) {
+    private fun processIntent(intent: LocationsIntent) {
         viewModelScope.launch {
             _intentFlow.emit(intent)
         }
     }
+
+    fun onPathClick(path: Pair<String, String>) {
+        processIntent(LocationsIntent.OnPathClick(path))
+    }
+
+    fun onFallBack() {
+        processIntent(LocationsIntent.Initial)
+    }
+
+    init {
+        processIntent(LocationsIntent.Initial)
+    }
+
 }
