@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
@@ -35,11 +34,10 @@ internal class LocationsViewModel @Inject constructor(
     private val getRoutesUseCase: GetRoutesUseCase,
 ) : ViewModel() {
 
-    private val _intentFlow = MutableSharedFlow<LocationsIntent>(
+    private val intentFlow = MutableSharedFlow<LocationsIntent>(
         extraBufferCapacity = 64,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
-    private val intentFlow = _intentFlow.asSharedFlow()
 
     private val initial = LocationsViewState.initial()
 
@@ -114,7 +112,7 @@ internal class LocationsViewModel @Inject constructor(
 
     private fun processIntent(intent: LocationsIntent) {
         viewModelScope.launch {
-            _intentFlow.emit(intent)
+            intentFlow.emit(intent)
         }
     }
 

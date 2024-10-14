@@ -89,7 +89,6 @@ internal fun MapRoute(
             onShowErrorSnackBar(it)
             popBackStack()
         }
-
     }
 
     BackHandler {

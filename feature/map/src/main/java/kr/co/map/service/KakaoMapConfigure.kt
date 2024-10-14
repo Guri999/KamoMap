@@ -14,6 +14,7 @@ import com.kakao.vectormap.route.RouteLineSegment
 import com.kakao.vectormap.route.RouteLineStyle
 import com.kakao.vectormap.route.RouteLineStyles
 import com.kakao.vectormap.route.RouteLineStylesSet
+import kr.co.kamo.feature.map.R
 import kr.co.ui.theme.RouteBlock
 import kr.co.ui.theme.RouteDelay
 import kr.co.ui.theme.RouteJam
@@ -90,17 +91,24 @@ private class KakaoMapController(
     }
 
     private val labelStyles: LabelStyles =
-        LabelStyle.from(kr.co.kamo.core.ui.R.drawable.img_marker_sample)
+        LabelStyle.from(R.drawable.img_marker_start)
+            .let { LabelStyles.from(it) }
+            .let { kakaoMap.labelManager?.addLabelStyles(it) }
+            .let { checkNotNull(it) }
+
+    private val labelStyles2: LabelStyles =
+        LabelStyle.from(R.drawable.img_marker_end)
             .let { LabelStyles.from(it) }
             .let { kakaoMap.labelManager?.addLabelStyles(it) }
             .let { checkNotNull(it) }
 
     fun createLabel(
         path: LatLng,
+        isStart: Boolean = false,
     ) {
         kakaoMap.labelManager?.layer?.apply {
             LabelOptions.from(path)
-                .setStyles(labelStyles)
+                .setStyles(if (isStart) labelStyles else labelStyles2)
                 .let { this.addLabel(it) }
         } ?: Timber.d("kakaoMap.labelManager is null")
     }
@@ -124,6 +132,6 @@ private fun KakaoMapController.setLabel(
     startPoint: LatLng,
     endPoint: LatLng,
 ) {
-    createLabel(startPoint)
+    createLabel(startPoint, isStart = true)
     createLabel(endPoint)
 }
