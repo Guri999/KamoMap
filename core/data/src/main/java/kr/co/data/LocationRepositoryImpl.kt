@@ -13,6 +13,9 @@ import javax.inject.Inject
 internal class LocationRepositoryImpl @Inject constructor(
     private val remote: kr.co.remote.LocationRemoteDataSource,
 ) : LocationRepository {
+    fun 한글테스트() {
+
+    }
 
     override suspend fun getLocations(): EntityWrapper<Locations> =
         remote.getLocations()
