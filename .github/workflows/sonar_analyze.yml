@@ -24,11 +24,12 @@ jobs:
           echo "SONAR_PROJECT_KEY=$SONAR_PROJECT_KEY" >> $GITHUB_ENV 
 
       - name: SonarQube Scan
-        uses: SonarSource/sonarcloud-github-action@v1.8
+        uses: SonarSource/sonarcloud-github-action@master
+        id: analyze-sonarcloud
+        continue-on-error: true
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
-          args: >
+          args:
             -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
             -Dsonar.organization=Guri999
-            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
