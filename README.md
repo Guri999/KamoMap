@@ -126,12 +126,3 @@ SnackBar를 관리하고 있습니다.
 - KakaoMap은 AndroidView를 사용하여 Compose에서
   구현하였고 [KakaoMapConfigure](/feature/map/src/main/java/kr/co/map/service/KakaoMapConfigure.kt)에서
   설정하고 있습니다.
-
-## Secret
-
-[local.properties](local.properties)에서 키를 관리하고 있습니다.
-
-- KAKAO_MAP_KEY=0123263e-977f-4124-b773-520ac2634c65
-- KAKAO_NATIVE_KEY=1b0965c85a2fb289050a0fb13411621b
-
-//누구에게도 공유하지 않았습니다.
