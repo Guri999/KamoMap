@@ -37,6 +37,6 @@ jobs:
           PATH: $JAVA_HOME/bin:$PATH
         with:
           args: >
-            -Dsonar.projectKey=Guri999_KamoMap
+            -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
             -Dsonar.organization=Guri999
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
