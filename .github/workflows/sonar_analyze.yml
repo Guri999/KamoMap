@@ -35,6 +35,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.projectKey=my-project-key
-            -Dsonar.organization=my-organization
+            -Dsonar.projectKey=Guri999_KamoMap
+            -Dsonar.organization=Guri999
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
