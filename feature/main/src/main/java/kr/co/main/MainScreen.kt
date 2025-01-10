@@ -37,6 +37,7 @@ internal fun MainRoute(
         }
     }
 
+    
     MainScreen(
         navController = navController,
         snackBarHostState = snackBarHostState,
